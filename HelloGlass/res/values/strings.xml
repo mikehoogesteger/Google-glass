@@ -9,6 +9,7 @@
     <string name="asr">ASR</string>
     <string name="footer">Welkom bij de Hello Glass demo van M &amp; M!</string>
     <string name="videoplayer">Play</string>
+      <string name="canvas">Draw canvas</string>
 
     <color name="black">#000000</color>
 

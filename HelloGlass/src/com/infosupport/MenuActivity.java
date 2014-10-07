@@ -59,8 +59,13 @@ public class MenuActivity extends Activity implements OnInitListener {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.videoplayer:
-			Intent intent4 = new Intent(this, VideoPlayerActivity.class);
-			startActivity(intent4);
+			Intent intent = new Intent(this, VideoPlayerActivity.class);
+			startActivity(intent);
+			return true;
+			
+		case R.id.canvas:
+			Intent intent1 = new Intent(this, Immersion3DActivity.class);
+			startActivity(intent1);
 			return true;
 			
 		case R.id.tts:

@@ -32,11 +32,12 @@ public final class R {
         public static final int ic_tts=0x7f020004;
     }
     public static final class id {
-        public static final int asr=0x7f0a0004;
+        public static final int asr=0x7f0a0005;
+        public static final int canvas=0x7f0a0003;
         public static final int footer=0x7f0a0001;
         public static final int hello_view=0x7f0a0000;
-        public static final int stop=0x7f0a0005;
-        public static final int tts=0x7f0a0003;
+        public static final int stop=0x7f0a0006;
+        public static final int tts=0x7f0a0004;
         public static final int videoplayer=0x7f0a0002;
     }
     public static final class layout {
@@ -46,12 +47,13 @@ public final class R {
         public static final int main=0x7f090000;
     }
     public static final class string {
-        public static final int action_settings=0x7f060009;
+        public static final int action_settings=0x7f06000a;
         public static final int app_name=0x7f060000;
         public static final int asr=0x7f060005;
+        public static final int canvas=0x7f060008;
         public static final int footer=0x7f060006;
         public static final int glass_voice_prompt=0x7f060002;
-        public static final int hello_world=0x7f060008;
+        public static final int hello_world=0x7f060009;
         public static final int say_glasswaretemplate=0x7f060001;
         public static final int stop=0x7f060003;
         public static final int tts=0x7f060004;

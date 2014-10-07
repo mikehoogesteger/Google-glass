@@ -5,6 +5,9 @@
         android:id="@+id/videoplayer"
         android:title="@string/videoplayer"/>
     <item
+        android:id="@+id/canvas"
+        android:title="@string/canvas"/>
+    <item
         android:id="@+id/tts"
         android:icon="@drawable/ic_tts"
         android:title="@string/tts"/>
