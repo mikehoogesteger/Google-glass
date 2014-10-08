@@ -10,7 +10,6 @@ import android.widget.TextView;
 public class AppViewer extends FrameLayout {
     private static final String TAG = "AppViewer";
 	private final TextView mTextView;
-	private final TextView mFooter;
 
 	public AppViewer(Context context) {
 	    this(context, null, 0);
@@ -27,9 +26,6 @@ public class AppViewer extends FrameLayout {
     	Log.e(TAG, "AppViewer constructor 3");
 	    LayoutInflater.from(context).inflate(R.layout.start, this);
 	    mTextView =  (TextView) findViewById(R.id.hello_view);
-	    mTextView.setText("Hello Glass!");
-	    
-	    mFooter =  (TextView) findViewById(R.id.footer);
-	    mFooter.setText(R.string.footer);	    
+	    mTextView.setText("Kenteken scanner");    
 	}
 }

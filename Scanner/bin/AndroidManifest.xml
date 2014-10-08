@@ -31,16 +31,6 @@
             android:enabled="true"
             android:label="@string/app_name" >
         </activity>
-        <activity
-            android:name=".VideoPlayerActivity"
-            android:enabled="true"
-            android:label="@string/app_name" >
-        </activity>
-        <activity
-            android:name=".Immersion3DActivity"
-            android:enabled="true"
-            android:label="@string/app_name" >
-        </activity>
 
         <service
             android:name=".AppService"
@@ -54,7 +44,7 @@
 
             <meta-data
                 android:name="com.google.android.glass.VoiceTrigger"
-                android:resource="@xml/voice_trigger_start" />
+                android:resource="@xml/voice_trigger" />
         </service>
     </application>
 
