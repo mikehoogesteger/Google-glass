@@ -1,7 +1,6 @@
 package com.infosupport;
 
 import java.io.IOException;
-import java.util.List;
 
 import android.app.Activity;
 import android.hardware.Camera;
@@ -13,8 +12,7 @@ import android.view.SurfaceView;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-public class PreviewActivity extends Activity
-{
+public class PreviewActivity extends Activity {
 	public static String TAG = "PreviewActivity";
 
 	private SurfaceView mPreview;
@@ -26,96 +24,90 @@ public class PreviewActivity extends Activity
 	public static final int MEDIA_TYPE_IMAGE = 1;
 	public static final int MEDIA_TYPE_VIDEO = 2;
 
-	// code copied from http://developer.android.com/guide/topics/media/camera.html
+	// code copied from
+	// http://developer.android.com/guide/topics/media/camera.html
 	/** A safe way to get an instance of the Camera object. */
-	public static Camera getCameraInstance(){
+	public static Camera getCameraInstance() {
 		Camera c = null;
 		try {
 			c = Camera.open(); // attempt to get a Camera instance
-		}
-		catch (Exception e){
+		} catch (Exception e) {
 			// Camera is not available (in use or does not exist)
 			Log.e(TAG, "Camera is not available");
 		}
 		return c; // returns null if camera is unavailable
-	}	
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		Log.v(TAG, "onCreate");
+		Log.i(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.preview);
 
-		// as long as this window is visible to the user, keep the device's screen turned on and bright.
-		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // WORKS ON GLASS!
+		// as long as this window is visible to the user, keep the device's
+		// screen turned on and bright.
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-		mPreview = (SurfaceView)findViewById(R.id.preview);
+		mPreview = (SurfaceView) findViewById(R.id.preview);
 		mPreviewHolder = mPreview.getHolder();
 		mPreviewHolder.addCallback(surfaceCallback);
 
 		mCamera = getCameraInstance();
 		if (mCamera != null)
-			startPreview();        
+			startPreview();
+
 	}
 
-	private void configPreview(int width, int height) {    	
-		Log.v(TAG, "configPreview");
-		Log.v(TAG, mCamera == null ? "mCamera is null" : "mCamera is not null");  
-		Log.v(TAG, mPreviewHolder.getSurface() == null ? "mPreviewHolder.getSurface() is null" : "mPreviewHolder.getSurface() is not null");  
+	private void configPreview(int width, int height) {
+		Log.i(TAG, "configPreview");
+		Log.i(TAG, mCamera == null ? "mCamera is null" : "mCamera is not null");
+		Log.i(TAG,
+				mPreviewHolder.getSurface() == null ? "mPreviewHolder.getSurface() is null"
+						: "mPreviewHolder.getSurface() is not null");
 
-		if ( mCamera != null && mPreviewHolder.getSurface() != null) {
+		if (mCamera != null && mPreviewHolder.getSurface() != null) {
 			try {
 				mCamera.setPreviewDisplay(mPreviewHolder);
-			}
-			catch (IOException e) {
-				Toast.makeText(PreviewActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+			} catch (IOException e) {
+				Toast.makeText(PreviewActivity.this, e.getMessage(),
+						Toast.LENGTH_LONG).show();
 			}
 
-			if ( !mCameraConfigured ) {
+			if (!mCameraConfigured) {
 				Camera.Parameters parameters = mCamera.getParameters();
-
-				List<int[]> sizes = parameters.getSupportedPreviewFpsRange();
-				for (int[] size : sizes) {            	    
-					Log.v(TAG, String.format(">>>> getSupportedPreviewFpsRange: %d, %d", size[0], size[1]));
-				}
-
 				parameters.setPreviewFpsRange(30000, 30000);
 				parameters.setPreviewSize(640, 360);
-
 				mCamera.setParameters(parameters);
-
 				mCameraConfigured = true;
 			}
 		}
 	}
 
-
-
 	private void startPreview() {
-		Log.v(TAG, "entering startPreview");
+		Log.i(TAG, "entering startPreview");
 
-		if ( mCameraConfigured && mCamera != null ) {
-			Log.v(TAG, "before calling mCamera.startPreview");
+		if (mCameraConfigured && mCamera != null) {
+			Log.i(TAG, "before calling mCamera.startPreview");
 			mCamera.startPreview();
 			mInPreview = true;
 		}
 	}
 
-
 	SurfaceHolder.Callback surfaceCallback = new SurfaceHolder.Callback() {
-		public void surfaceCreated( SurfaceHolder holder ) {
-			Log.v(TAG, "surfaceCreated");
+		public void surfaceCreated(SurfaceHolder holder) {
+			Log.i(TAG, "surfaceCreated");
 		}
 
-		public void surfaceChanged( SurfaceHolder holder, int format, int width, int height ) {
-			Log.v(TAG, "surfaceChanged="+width+","+height);
+		public void surfaceChanged(SurfaceHolder holder, int format, int width,
+				int height) {
+			Log.i(TAG, "surfaceChanged=" + width + "," + height);
 			configPreview(width, height);
 			startPreview();
 		}
 
-		public void surfaceDestroyed( SurfaceHolder holder ) {
-			Log.v(TAG, "surfaceDestroyed");
+		public void surfaceDestroyed(SurfaceHolder holder) {
+			Log.i(TAG, "surfaceDestroyed");
 			if (mCamera != null) {
 				mCamera.release();
 				mCamera = null;
@@ -123,30 +115,28 @@ public class PreviewActivity extends Activity
 		}
 	};
 
-
 	@Override
 	public void onResume() {
-		Log.v(TAG, "onResume");
+		Log.i(TAG, "onResume");
 		super.onResume();
 
 		// Re-acquire the camera and start the preview.
 		if (mCamera == null) {
 			mCamera = getCameraInstance();
 			if (mCamera != null) {
-				Log.v(TAG, "mCamera!=null");
+				Log.i(TAG, "mCamera!=null");
 				configPreview(640, 360);
 				startPreview();
-			}	
-			else
-				Log.v(TAG, "mCamera==null");
+			} else
+				Log.i(TAG, "mCamera==null");
 		}
 	}
 
 	@Override
 	public void onPause() {
-		Log.v(TAG, "onPause");
-		if ( mInPreview ) {
-			Log.v(TAG,  "mInPreview is true");
+		Log.i(TAG, "onPause");
+		if (mInPreview) {
+			Log.i(TAG, "mInPreview is true");
 			mCamera.stopPreview();
 
 			mCamera.release();
@@ -154,16 +144,13 @@ public class PreviewActivity extends Activity
 			mInPreview = false;
 		}
 		super.onPause();
-	}    
-
+	}
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		Log.v(TAG,  "onKeyDown");
-		if (keyCode == KeyEvent.KEYCODE_CAMERA) { // for both quick press (image capture) and long press (video capture)
-			Log.v(TAG,  "KEYCODE_CAMERA: "+ (event.isLongPress()?"long press": "not long press"));
-    	
-			if ( mInPreview ) {
+		Log.i(TAG, "onKeyDown");
+		if (keyCode == KeyEvent.KEYCODE_CAMERA) {
+			if (mInPreview) {
 				mCamera.stopPreview();
 
 				mCamera.release();
@@ -172,9 +159,8 @@ public class PreviewActivity extends Activity
 			}
 			return false;
 		} else {
-			Log.v(TAG,  "NOT KEYCODE_CAMERA");
-
+			Log.i(TAG, "NOT KEYCODE_CAMERA");
 			return super.onKeyDown(keyCode, event);
 		}
-	}    
+	}
 }

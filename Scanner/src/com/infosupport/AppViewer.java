@@ -13,17 +13,17 @@ public class AppViewer extends FrameLayout {
 
 	public AppViewer(Context context) {
 	    this(context, null, 0);
-    	Log.e(TAG, "AppViewer constructor");
+    	Log.i(TAG, "AppViewer constructor");
 	}
 
 	public AppViewer(Context context, AttributeSet attrs) {
 	    this(context, attrs, 0);
-    	Log.e(TAG, "AppViewer constructor 2");
+    	Log.i(TAG, "AppViewer constructor 2");
 	}
 	    	
 	public AppViewer(Context context, AttributeSet attrs, int style) {
 	    super(context, attrs, style);
-    	Log.e(TAG, "AppViewer constructor 3");
+    	Log.i(TAG, "AppViewer constructor 3");
 	    LayoutInflater.from(context).inflate(R.layout.start, this);
 	    mTextView =  (TextView) findViewById(R.id.hello_view);
 	    mTextView.setText("Kenteken scanner");    

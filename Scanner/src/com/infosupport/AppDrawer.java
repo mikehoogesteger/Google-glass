@@ -12,38 +12,38 @@ public class AppDrawer implements SurfaceHolder.Callback {
     private SurfaceHolder mHolder;
 
     public AppDrawer(Context context) {
-    	Log.e(TAG, "AppDrawer Constructor");
+    	Log.i(TAG, "AppDrawer Constructor");
         mView = new AppViewer(context);
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-    	Log.e(TAG, "surfaceChanged, width=" + width + ", height=" + height);
+    	Log.i(TAG, "surfaceChanged, width=" + width + ", height=" + height);
     	// Measure and layout the view with the canvas dimensions.
         int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY);
         int heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY);
 
-    	Log.e(TAG, "measuredWidth="+widthMeasureSpec+", measuredHeight="+heightMeasureSpec);
+    	Log.i(TAG, "measuredWidth="+widthMeasureSpec+", measuredHeight="+heightMeasureSpec);
         mView.measure(widthMeasureSpec, heightMeasureSpec);
-    	Log.e(TAG, "getMeasuredWidth="+mView.getMeasuredWidth()+", getMeasuredHeight="+mView.getMeasuredHeight());
+    	Log.i(TAG, "getMeasuredWidth="+mView.getMeasuredWidth()+", getMeasuredHeight="+mView.getMeasuredHeight());
         mView.layout(0, 0, mView.getMeasuredWidth(), mView.getMeasuredHeight());        
         draw(mView);
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-    	Log.e(TAG, "surfaceCreated");
+    	Log.i(TAG, "surfaceCreated");
         mHolder = holder;
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-    	Log.e(TAG, "surfaceDestroyed");
+    	Log.i(TAG, "surfaceDestroyed");
         mHolder = null;
     }
 
     private void draw(View view) {
-    	Log.e(TAG, "draw");
+    	Log.i(TAG, "draw");
         Canvas canvas;
         try {
             canvas = mHolder.lockCanvas();
@@ -51,12 +51,12 @@ public class AppDrawer implements SurfaceHolder.Callback {
             return;
         }
         if (canvas != null) {
-        	Log.e(TAG, "canvas is not null");
+        	Log.i(TAG, "canvas is not null");
             view.draw(canvas);
             mHolder.unlockCanvasAndPost(canvas);
         }
         else {
-        	Log.e(TAG, "canvas is null");
+        	Log.i(TAG, "canvas is null");
         }
     }	
 

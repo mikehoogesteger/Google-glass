@@ -18,21 +18,21 @@ public class AppService extends Service {
 
 	@Override
 	public void onCreate() {
-		Log.e(TAG, "onCreate");
+		Log.i(TAG, "onCreate");
 		super.onCreate();
 	}
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		Log.e(TAG, "onBind");
+		Log.i(TAG, "onBind");
 		return null;
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		Log.e(TAG, "onStartCommand");
+		Log.i(TAG, "onStartCommand");
 		if (mLiveCard == null) {
-			Log.e(TAG, "onStartCommand: true");
+			Log.i(TAG, "onStartCommand: true");
 			mLiveCard = new LiveCard(this, LIVE_CARD_ID);
 
 			// Keep track of the callback to remove it before unpublishing.
@@ -45,26 +45,26 @@ public class AppService extends Service {
 					0));
 
 			mLiveCard.publish(PublishMode.REVEAL);
-			Log.e(TAG, "Done publishing LiveCard");
+			Log.i(TAG, "Done publishing LiveCard");
 		} else {
-			Log.e(TAG, "onStartCommand: false");
+			Log.i(TAG, "onStartCommand: false");
 		}
 		return START_STICKY;
 	}
 
 	@Override
 	public void onDestroy() {
-		Log.e(TAG, "OnDestroy()");
+		Log.i(TAG, "OnDestroy()");
 
 		if (mLiveCard != null && mLiveCard.isPublished()) {
-			Log.e(TAG, "OnDestroy: true");
+			Log.i(TAG, "OnDestroy: true");
 			if (mCallback != null) {
 				mLiveCard.getSurfaceHolder().removeCallback(mCallback);
 			}
 			mLiveCard.unpublish();
 			mLiveCard = null;
 		} else {
-			Log.e(TAG, "OnDestroy: false");
+			Log.i(TAG, "OnDestroy: false");
 		}
 		super.onDestroy();
 	}
