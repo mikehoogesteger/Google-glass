@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/videoplayer"
+        android:title="@string/videoplayer"/>
+    <item
+        android:id="@+id/canvas"
+        android:title="@string/canvas"/>
+    <item
+        android:id="@+id/tts"
+        android:icon="@drawable/ic_tts"
+        android:title="@string/tts"/>
+    <item
+        android:id="@+id/asr"
+        android:icon="@drawable/ic_asr"
+        android:title="@string/asr"/>
+    <item
+        android:id="@+id/stop"
+        android:icon="@drawable/ic_stop"
+        android:title="@string/stop"/>
+
+</menu>
