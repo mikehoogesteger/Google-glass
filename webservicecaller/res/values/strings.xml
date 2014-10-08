@@ -1,0 +1,8 @@
+<resources>
+
+    <string name="app_name">webservicecaller</string>
+	<string name="say_call_webservice">Webservice</string>
+	<string name="stop">stop</string>
+	<color name="black">#000000</color>
+    
+</resources>
