@@ -1,15 +1,8 @@
 package com.infosupport;
 
-import java.util.HashMap;
-import java.util.Locale;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.speech.RecognizerIntent;
-import android.speech.tts.TextToSpeech;
-import android.speech.tts.TextToSpeech.OnInitListener;
-import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,7 +10,6 @@ import android.view.MenuItem;
 
 public class MenuActivity extends Activity {
 	private static final String TAG = "MenuActivity";
-	private TextToSpeech tts;
 	private boolean mAttachedToWindow;
 	private boolean mTTSSelected;
 
@@ -60,8 +52,11 @@ public class MenuActivity extends Activity {
 		switch (item.getItemId()) {
 			
 		case R.id.scan:
-//			Intent intent1 = new Intent(this, Immersion3DActivity.class);
-//			startActivity(intent1);
+			Log.e(TAG, "Menu item scan");
+//			Intent i = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+//			startActivity(i);
+			Intent intent = new Intent(this, PreviewActivity.class);
+            startActivity(intent);
 			return true;
 
 		case R.id.stop:
