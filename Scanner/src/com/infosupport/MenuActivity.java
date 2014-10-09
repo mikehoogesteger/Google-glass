@@ -53,9 +53,7 @@ public class MenuActivity extends Activity {
 			
 		case R.id.scan:
 			Log.i(TAG, "Menu item scan");
-//			Intent i = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-//			startActivity(i);
-			Intent intent = new Intent(this, PreviewActivity.class);
+			Intent intent = new Intent(this, OCRActivity.class);
             startActivity(intent);
 			return true;
 
