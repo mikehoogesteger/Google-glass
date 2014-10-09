@@ -11,7 +11,7 @@ import com.google.android.glass.timeline.LiveCard.PublishMode;
 
 public class AppService extends Service {
 	private static final String TAG = "AppService";
-	private static final String LIVE_CARD_ID = "HelloGlass";
+	private static final String LIVE_CARD_ID = "Scanner";
 
 	private AppDrawer mCallback;
 	private LiveCard mLiveCard;

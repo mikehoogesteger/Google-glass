@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -95,7 +96,7 @@ public class OCRActivity extends Activity implements
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		Log.v(TAG, "onCreate");
+		Log.v(TAG, "onCreate");	
 		super.onCreate(savedInstanceState);
 
 		String[] paths = new String[] { DATA_PATH, DATA_PATH + "tessdata/" };
@@ -171,12 +172,8 @@ public class OCRActivity extends Activity implements
 
 			if (!mCameraConfigured) {
 				Camera.Parameters parameters = mCamera.getParameters();
-
 				parameters.setPreviewFpsRange(30000, 30000);
 				parameters.setPreviewSize(640, 360);
-				// parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-				// parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-				// parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
 				parameters.setJpegQuality(100);
 
 				mCamera.setParameters(parameters);
@@ -393,9 +390,16 @@ public class OCRActivity extends Activity implements
 		if (recognizedText.length() != 0) {
 			Log.v(TAG, ">>>> " + recognizedText);
 
-			Message msg = new Message();
-			msg.obj = recognizedText;
-			mHandler.sendMessage(msg);
+//			Message msg = new Message();
+//			msg.obj = recognizedText;
+//			mHandler.sendMessage(msg);
+			Intent intent = new Intent(this, ResultActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			Bundle b = new Bundle();
+			b.putString("json", recognizedText);
+			intent.putExtras(b);
+			startActivity(intent);
 		}
 	}
 
@@ -404,7 +408,6 @@ public class OCRActivity extends Activity implements
 		public void handleMessage(Message msg) {
 			String text = (String) msg.obj;
 			Log.v(TAG, "handleMessage >>>> " + text);
-			new ServiceCaller(text).execute();
 			finish();
 			Toast.makeText(OCRActivity.this, text, Toast.LENGTH_LONG).show();
 		}

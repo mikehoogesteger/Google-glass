@@ -3,10 +3,11 @@
 
     <item
         android:id="@+id/scan"
+        android:icon="@drawable/ic_search_50"
         android:title="@string/scan"/>
     <item
         android:id="@+id/stop"
-        android:icon="@drawable/ic_stop"
+        android:icon="@drawable/ic_no_50"
         android:title="@string/stop"/>
 
 </menu>

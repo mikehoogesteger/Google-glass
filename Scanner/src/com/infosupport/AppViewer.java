@@ -25,7 +25,7 @@ public class AppViewer extends FrameLayout {
 	    super(context, attrs, style);
     	Log.i(TAG, "AppViewer constructor 3");
 	    LayoutInflater.from(context).inflate(R.layout.start, this);
-	    mTextView =  (TextView) findViewById(R.id.hello_view);
+	    mTextView =  (TextView) findViewById(R.id.scanner_view);
 	    mTextView.setText("Kenteken scanner");    
 	}
 }
