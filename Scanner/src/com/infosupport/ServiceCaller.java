@@ -12,19 +12,22 @@ import org.json.JSONObject;
 import android.os.AsyncTask;
 import android.util.Log;
 
-public class ServiceCaller extends AsyncTask<Void, Void, Void> {
+public class ServiceCaller extends AsyncTask<String, JSONObject, JSONObject> {
 
 	private static final String TAG = "ServiceCaller";
 	private static final String BASE_URL = "http://rdw.almere.pilod.nl/kentekens/";
 	private String url = BASE_URL;
 	private String json;
+	private TaskDelegate delegate;
 
-	public ServiceCaller(String kenteken) {
+	public ServiceCaller(String kenteken, TaskDelegate delegate) {
 		url += kenteken;
+		this.delegate = delegate;
 	}
 
 	@Override
-	protected Void doInBackground(Void... params) {
+	protected JSONObject doInBackground(String... params) {
+		JSONObject obj = null;
 		try {
 			URL url = new URL(this.url);
 			HttpURLConnection urlConnection = (HttpURLConnection) url
@@ -38,18 +41,15 @@ public class ServiceCaller extends AsyncTask<Void, Void, Void> {
 			}
 			json = new String(b);
 
-			JSONObject obj;
+			
 			try {
 				obj = new JSONObject(json);
-				String kenteken = obj.getJSONObject("resource").getString(
-						"Kenteken");
-				String verzekerd = obj.getJSONObject("resource").getString(
-						"WAMverzekerdgeregistreerd");
-				String apk = obj.getJSONObject("resource").getString(
-						"VervaldatumAPK");
-				System.out.println(kenteken);
-				System.out.println(verzekerd);
-				System.out.println(apk);
+//				String kenteken = obj.getJSONObject("resource").getString(
+//						"Kenteken");
+//				String verzekerd = obj.getJSONObject("resource").getString(
+//						"WAMverzekerdgeregistreerd");
+//				String apk = obj.getJSONObject("resource").getString(
+//						"VervaldatumAPK");
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -58,22 +58,13 @@ public class ServiceCaller extends AsyncTask<Void, Void, Void> {
 		} catch (Exception e) {
 			Log.e(TAG, "JSON error");
 		}
-		return null;
+		
+		return obj;
 	}
-
-	public String getJSON() {
-		// JSONObject obj;
-		// try {
-		// obj = new JSONObject(json);
-		//
-		// String cilinders = obj.getJSONObject("resource").getString(
-		// "Aantalcilinders");
-		//
-		// System.out.println(cilinders);
-		// } catch (JSONException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		return json;
+	
+	@Override
+	protected void onPostExecute(JSONObject result) {
+		delegate.taskCompletionResult(result);
+		super.onPostExecute(result);
 	}
 }

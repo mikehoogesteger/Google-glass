@@ -18,5 +18,6 @@
     </style>
 
     <color name="black">#000000</color>
+    <color name="red">#cc3333</color>
 
 </resources>

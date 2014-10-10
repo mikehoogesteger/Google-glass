@@ -1,5 +1,8 @@
 package com.infosupport;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,22 +13,22 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-public class ResultActivity extends Activity {
+public class ResultActivity extends Activity implements TaskDelegate {
 	private static final String TAG = "ResultActivity";
-	private TextView mResult;
+	private TextView mKenteken;
+	private TextView mVerzekerd;
+	private TextView mAPK;
+	private TextView mError;
+	private String kenteken;
+	private ServiceCaller sc;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Bundle b = getIntent().getExtras();
-		String kenteken = b.getString("json");
-		ServiceCaller sc = new ServiceCaller(kenteken);
+		kenteken = b.getString("json");
+		sc = new ServiceCaller(kenteken, this);
 		sc.execute();
-		String text = kenteken;
-//		sc.getJSON();
-		setContentView(R.layout.result);
-		mResult = (TextView) findViewById(R.id.result);
-		mResult.setText(text);
 	}
 
 	@Override
@@ -64,5 +67,44 @@ public class ResultActivity extends Activity {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	@Override
+	public void taskCompletionResult(JSONObject result) {
+		Log.i(TAG, result.toString());
+
+		String verzekerd = null;
+		String apk = null;
+		String error = null;
+
+		try {
+			verzekerd = result.getJSONObject("resource").getString(
+					"WAMverzekerdgeregistreerd");
+			apk = result.getJSONObject("resource").getString("VervaldatumAPK");
+		} catch (JSONException e) {
+			try {
+				error = result.getJSONObject("error").getString("message");
+			} catch (JSONException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+		}
+
+		setContentView(R.layout.result);
+
+		mKenteken = (TextView) findViewById(R.id.kenteken);
+		mVerzekerd = (TextView) findViewById(R.id.verzekerd);
+		mAPK = (TextView) findViewById(R.id.apk);
+		mKenteken.setText(kenteken);
+		mVerzekerd.setText(verzekerd);
+		mAPK.setText(apk);
+
+		mKenteken.setText(kenteken);
+		mError = (TextView) findViewById(R.id.error);
+		mError.setText(error);
+
+		Log.i(TAG, "TEKST: " + result.toString());
+
 	}
 }
