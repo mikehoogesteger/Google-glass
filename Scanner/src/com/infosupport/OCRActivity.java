@@ -96,7 +96,7 @@ public class OCRActivity extends Activity implements
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		Log.v(TAG, "onCreate");	
+		Log.v(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 
 		String[] paths = new String[] { DATA_PATH, DATA_PATH + "tessdata/" };
@@ -390,16 +390,24 @@ public class OCRActivity extends Activity implements
 		if (recognizedText.length() != 0) {
 			Log.v(TAG, ">>>> " + recognizedText);
 
-//			Message msg = new Message();
-//			msg.obj = recognizedText;
-//			mHandler.sendMessage(msg);
-			Intent intent = new Intent(this, ResultActivity.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			Bundle b = new Bundle();
-			b.putString("json", recognizedText);
-			intent.putExtras(b);
-			startActivity(intent);
+			if (recognizedText.length() == 6) {
+				Intent intent = new Intent(this, ResultActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				Bundle b = new Bundle();
+				b.putString("json", recognizedText);
+				intent.putExtras(b);
+				startActivity(intent);
+				mCamera.release();
+			} else {
+				Message msg = new Message();
+				msg.obj = "Geen correct kenteken gescand!";
+				mHandler.sendMessage(msg);
+				Intent intent = new Intent(this, OCRActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				startActivity(intent);
+			}
 		}
 	}
 
@@ -408,7 +416,6 @@ public class OCRActivity extends Activity implements
 		public void handleMessage(Message msg) {
 			String text = (String) msg.obj;
 			Log.v(TAG, "handleMessage >>>> " + text);
-			finish();
 			Toast.makeText(OCRActivity.this, text, Toast.LENGTH_LONG).show();
 		}
 	};

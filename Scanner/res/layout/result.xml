@@ -11,12 +11,14 @@
         android:layout_gravity="center"
         android:layout_marginTop="-150px"
         android:gravity="center" />
+
     <TextView
         android:id="@+id/verzekerd"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:gravity="center" />
+
     <TextView
         android:id="@+id/apk"
         android:layout_width="match_parent"
@@ -24,12 +26,13 @@
         android:layout_gravity="center"
         android:layout_marginTop="150px"
         android:gravity="center" />
+
     <TextView
         android:id="@+id/error"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:gravity="center" 
-        android:textColor="@color/red"/>
+        android:gravity="center"
+        android:textColor="@color/red" />
 
 </RelativeLayout>

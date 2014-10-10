@@ -7,5 +7,6 @@
     <string name="zoom">Zoom</string>
     <string name="title_activity_result">ResultActivity</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_main">MainActivity</string>
 
 </resources>

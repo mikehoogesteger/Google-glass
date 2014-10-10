@@ -61,7 +61,10 @@ public class ResultActivity extends Activity implements TaskDelegate {
 			return true;
 
 		case R.id.stop:
-			finish();
+			Intent i = new Intent(this, MainActivity.class);
+			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			startActivity(i);
 			return true;
 
 		default:
@@ -72,39 +75,38 @@ public class ResultActivity extends Activity implements TaskDelegate {
 	@Override
 	public void taskCompletionResult(JSONObject result) {
 		Log.i(TAG, result.toString());
-
-		String verzekerd = null;
-		String apk = null;
-		String error = null;
-
-		try {
-			verzekerd = result.getJSONObject("resource").getString(
-					"WAMverzekerdgeregistreerd");
-			apk = result.getJSONObject("resource").getString("VervaldatumAPK");
-		} catch (JSONException e) {
-			try {
-				error = result.getJSONObject("error").getString("message");
-			} catch (JSONException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			e.printStackTrace();
-		}
-
 		setContentView(R.layout.result);
 
-		mKenteken = (TextView) findViewById(R.id.kenteken);
-		mVerzekerd = (TextView) findViewById(R.id.verzekerd);
-		mAPK = (TextView) findViewById(R.id.apk);
-		mKenteken.setText(kenteken);
-		mVerzekerd.setText(verzekerd);
-		mAPK.setText(apk);
+		try {
+			String verzekerd = result.getJSONObject("resource").getString(
+					"WAMverzekerdgeregistreerd");
+			String apk = result.getJSONObject("resource").getString(
+					"VervaldatumAPK");
 
-		mKenteken.setText(kenteken);
-		mError = (TextView) findViewById(R.id.error);
-		mError.setText(error);
+			mKenteken = (TextView) findViewById(R.id.kenteken);
+			mVerzekerd = (TextView) findViewById(R.id.verzekerd);
+			mAPK = (TextView) findViewById(R.id.apk);
 
-		Log.i(TAG, "TEKST: " + result.toString());
+			mKenteken.setText("Kenteken: " + kenteken);
+			if (verzekerd == "true") {
+				mVerzekerd.setText("Verzekerd: Ja");
+			} else {
+				mVerzekerd.setText("Verzekerd: Nee");
+			}
+			mAPK.setText("APK verloopt op: " + apk);
+		} catch (JSONException e) {
+			try {
+				String error = result.getJSONObject("error").getString(
+						"message");
 
+				mError = (TextView) findViewById(R.id.error);
+				mError.setText(error);
+			} catch (JSONException e1) {
+				Log.e(TAG, "catch -> error niet gevonden");
+				e1.printStackTrace();
+			}
+			Log.e(TAG, "catch -> resource niet gevonden");
+			e.printStackTrace();
+		}
 	}
 }

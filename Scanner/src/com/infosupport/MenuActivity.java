@@ -58,7 +58,7 @@ public class MenuActivity extends Activity {
 			return true;
 
 		case R.id.stop:
-			stopService(new Intent(this, AppService.class));
+			finish();
 			return true;
 
 		default:
