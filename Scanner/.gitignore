@@ -1,0 +1,6 @@
+# don't commit bin files #
+bin/**/*
+
+# eclipse files #
+*.properties
+*.classpath
