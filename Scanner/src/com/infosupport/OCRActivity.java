@@ -74,7 +74,7 @@ public class OCRActivity extends Activity implements
 		// Create the storage directory if it does not exist
 		if (!mediaStorageDir.exists()) {
 			if (!mediaStorageDir.mkdirs()) {
-				Log.d("MyCameraApp", "failed to create directory");
+				Log.e("MyCameraApp", "failed to create directory");
 				return null;
 			}
 		}
