@@ -5,7 +5,7 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 
 public class Immersion3DActivity extends Activity {
-	private static final String TAG = "Immersion3DActivity";
+//	private static final String TAG = "Immersion3DActivity";
 	MyGLView view3D; // 3D
 
 	/** Called when the activity is first created. */

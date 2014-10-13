@@ -1,5 +1,10 @@
 package com.infosupport;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -76,12 +81,14 @@ public class ResultActivity extends Activity implements TaskDelegate {
 	public void taskCompletionResult(JSONObject result) {
 		Log.i(TAG, result.toString());
 		setContentView(R.layout.result);
-
+		
 		try {
 			String verzekerd = result.getJSONObject("resource").getString(
 					"WAMverzekerdgeregistreerd");
 			String apk = result.getJSONObject("resource").getString(
 					"VervaldatumAPK");
+			Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US).parse(apk);
+			String formattedApk = new SimpleDateFormat("dd/MM/yyyy", Locale.US).format(date);
 
 			mKenteken = (TextView) findViewById(R.id.kenteken);
 			mVerzekerd = (TextView) findViewById(R.id.verzekerd);
@@ -93,8 +100,8 @@ public class ResultActivity extends Activity implements TaskDelegate {
 			} else {
 				mVerzekerd.setText("Verzekerd: Nee");
 			}
-			mAPK.setText("APK verloopt op: " + apk);
-		} catch (JSONException e) {
+			mAPK.setText("APK verloopt op: " + formattedApk);
+		} catch (JSONException | ParseException e) {
 			try {
 				String error = result.getJSONObject("error").getString(
 						"message");
@@ -105,7 +112,7 @@ public class ResultActivity extends Activity implements TaskDelegate {
 				Log.e(TAG, "catch -> error niet gevonden");
 				e1.printStackTrace();
 			}
-			Log.e(TAG, "catch -> resource niet gevonden");
+			Log.e(TAG, "catch -> resource niet gevonden | datum kan niet geparst worden");
 			e.printStackTrace();
 		}
 	}

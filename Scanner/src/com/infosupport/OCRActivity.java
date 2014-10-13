@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -79,7 +80,7 @@ public class OCRActivity extends Activity implements
 		}
 
 		// Create a media file name
-		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
 				.format(new Date());
 		File mediaFile;
 		if (type == MEDIA_TYPE_IMAGE) {
@@ -227,9 +228,9 @@ public class OCRActivity extends Activity implements
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 			float velocityY) {
 		Log.v(TAG, mCamera == null ? "mCamere is null" : "mCamera NOT null");
-		if (mCamera == null || mPreviewHolder.getSurface() == null)
+		if (mCamera == null || mPreviewHolder.getSurface() == null) {
 			return true;
-
+		}
 		Camera.Parameters parameters = mCamera.getParameters();
 		Log.v(TAG, "parameters.getMaxZoom=" + parameters.getMaxZoom());
 		int zoom = parameters.getZoom();
@@ -257,7 +258,7 @@ public class OCRActivity extends Activity implements
 	@Override
 	public void onLongPress(MotionEvent e) {
 		Log.v(TAG, "onLongPress");
-		mCamera.takePicture(mShutterCallback, mPictureCallback, mjpeg);
+		finish();
 	}
 
 	@Override
@@ -308,9 +309,9 @@ public class OCRActivity extends Activity implements
 				fos.write(data);
 				fos.close();
 			} catch (FileNotFoundException e) {
-				Log.d(TAG, "File not found: " + e.getMessage());
+				Log.e(TAG, "File not found: " + e.getMessage());
 			} catch (IOException e) {
-				Log.d(TAG, "Error accessing file: " + e.getMessage());
+				Log.e(TAG, "Error accessing file: " + e.getMessage());
 			}
 
 			Log.v(TAG, pictureFile.getAbsolutePath());
@@ -423,34 +424,13 @@ public class OCRActivity extends Activity implements
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		Log.v(TAG, "onKeyDown");
+
 		if (keyCode == KeyEvent.KEYCODE_CAMERA) {
-			Log.v(TAG, "KEYCODE_CAMERA: "
-					+ (event.isLongPress() ? "long press" : "not long press"));
-
-			if (event.isLongPress()) // video capture
-				return true; // If you return true from onKeyDown(), your
-								// activity consumes the event and the Glass
-								// camera
-			// doesn't start. Do this only if there is no way to interrupt your
-			// activity's use of the camera (for example,
-			// if you are capturing continuous video).
-
-			// Stop the preview and release the camera.
-			// Execute your logic as quickly as possible
-			// so the capture happens quickly.
-
-			if (mInPreview) {
-				mCamera.stopPreview();
-
-				mCamera.release();
-				mCamera = null;
-				mInPreview = false;
-			}
-			return false;
-		} else {
-			Log.v(TAG, "NOT KEYCODE_CAMERA");
-			return super.onKeyDown(keyCode, event);
+			Log.v(TAG, "Pressed camera button to start ocr");
+			mCamera.takePicture(mShutterCallback, mPictureCallback, mjpeg);
+			return true;
 		}
+		return false;
 	}
 
 	@Override

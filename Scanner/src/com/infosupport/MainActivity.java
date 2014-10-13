@@ -18,8 +18,9 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		View view = new CardBuilder(this, CardBuilder.Layout.TEXT)
+		View view = new CardBuilder(this, CardBuilder.Layout.MENU)
 	    .setText("Kenteken scanner")
+	    .setFootnote("TAP voor het menu.")
 	    .getView();
 		
 		setContentView(view);
