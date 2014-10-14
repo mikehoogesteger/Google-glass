@@ -100,6 +100,8 @@ public class OCRActivity extends Activity implements
 		Log.v(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 
+		// mCamera.
+
 		String[] paths = new String[] { DATA_PATH, DATA_PATH + "tessdata/" };
 
 		for (String path : paths) {
@@ -207,8 +209,11 @@ public class OCRActivity extends Activity implements
 		public void surfaceDestroyed(SurfaceHolder holder) {
 			Log.v(TAG, "surfaceDestroyed");
 			if (mCamera != null) {
+				mCamera.stopPreview();
+
 				mCamera.release();
 				mCamera = null;
+				mInPreview = false;
 			}
 		}
 	};
@@ -249,9 +254,13 @@ public class OCRActivity extends Activity implements
 		// Applications should not call startSmoothZoom
 		// again or change the zoom value before zoom stops, or the app will
 		// crash!
-		mCamera.stopSmoothZoom();
-		mCamera.startSmoothZoom(zoom);
-
+		try {
+			mCamera.stopSmoothZoom();
+			mCamera.startSmoothZoom(zoom);
+		} catch (RuntimeException e) {
+			mCamera.release();
+			mCamera = null;
+		}
 		return false;
 	}
 
@@ -399,7 +408,7 @@ public class OCRActivity extends Activity implements
 				b.putString("json", recognizedText);
 				intent.putExtras(b);
 				startActivity(intent);
-				mCamera.release();
+//				mCamera.release();
 			} else {
 				Message msg = new Message();
 				msg.obj = "Geen correct kenteken gescand!";
@@ -437,7 +446,7 @@ public class OCRActivity extends Activity implements
 	public void onResume() {
 		Log.v(TAG, "onResume");
 		super.onResume();
-	}
+	};
 
 	@Override
 	public void onPause() {
