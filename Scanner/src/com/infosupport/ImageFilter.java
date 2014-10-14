@@ -21,6 +21,8 @@ public class ImageFilter {
 		Bitmap bitmap = makeBitmapOutJpg(image);
 		Log.i(TAG, "Making the image black and white");
 		bitmap = makeBlackAndWhite(bitmap);
+		Log.i(TAG, "Crop the image");
+		bitmap = cropImage(bitmap);
 		Log.i(TAG, "Saving the black and white image");
 		createJpgFromBitmap(bitmap, image);
 		Log.i(TAG, "Image has been saved");
@@ -29,6 +31,11 @@ public class ImageFilter {
 	public Bitmap makeBitmapOutJpg(File image) {
 		Bitmap bitmap = BitmapFactory.decodeFile(image.toString());
 		return bitmap;
+	}
+	
+	public Bitmap cropImage(Bitmap image) {
+		image = Bitmap.createBitmap(image, 241, 450, 862, 163);
+		return image;
 	}
 
 	public Bitmap makeBitmapBlackAndWhite(Bitmap image) {
