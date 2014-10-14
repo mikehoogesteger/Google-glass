@@ -5,8 +5,6 @@
     <string name="scan">Scan</string>
     <string name="stop">STOP</string>
     <string name="zoom">Zoom</string>
-    <string name="title_activity_result">ResultActivity</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="zoomText">ZOOM: 0</string>
 
 </resources>

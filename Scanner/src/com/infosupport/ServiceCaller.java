@@ -1,6 +1,7 @@
 package com.infosupport;
 
 import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -27,6 +28,7 @@ public class ServiceCaller extends AsyncTask<String, JSONObject, JSONObject> {
 	@Override
 	protected JSONObject doInBackground(String... params) {
 		JSONObject obj = null;
+
 		try {
 			URL url = new URL(this.url);
 			HttpURLConnection urlConnection = (HttpURLConnection) url
@@ -40,27 +42,19 @@ public class ServiceCaller extends AsyncTask<String, JSONObject, JSONObject> {
 			}
 			json = new String(b);
 
-			
 			try {
 				obj = new JSONObject(json);
-//				String kenteken = obj.getJSONObject("resource").getString(
-//						"Kenteken");
-//				String verzekerd = obj.getJSONObject("resource").getString(
-//						"WAMverzekerdgeregistreerd");
-//				String apk = obj.getJSONObject("resource").getString(
-//						"VervaldatumAPK");
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
+				Log.e(TAG, "JSON error");
 				e.printStackTrace();
 			}
-			System.out.println(json);
-		} catch (Exception e) {
-			Log.e(TAG, "JSON error");
+		} catch (IOException e) {
+			Log.e(TAG, "Connection eror");
+			e.printStackTrace();
 		}
-		
 		return obj;
 	}
-	
+
 	@Override
 	protected void onPostExecute(JSONObject result) {
 		delegate.taskCompletionResult(result);
