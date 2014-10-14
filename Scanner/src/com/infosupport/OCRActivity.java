@@ -74,7 +74,7 @@ public class OCRActivity extends Activity implements
 		// Create the storage directory if it does not exist
 		if (!mediaStorageDir.exists()) {
 			if (!mediaStorageDir.mkdirs()) {
-				Log.e("MyCameraApp", "failed to create directory");
+				Log.e(TAG, "failed to create directory");
 				return null;
 			}
 		}
@@ -376,9 +376,18 @@ public class OCRActivity extends Activity implements
 
 			// Convert to ARGB_8888, required by tess
 			bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+			
 		} catch (IOException e) {
 			Log.e(TAG, "Couldn't correct orientation: " + e.toString());
 		}
+		
+		//new ImageFilter(new File(mPath), bitmap);
+		ImageFilter imageFilter = new ImageFilter();
+		File image = new File(mPath);
+		bitmap = imageFilter.makeBitmapOutJpg(image);
+		bitmap = imageFilter.cropImage(bitmap);
+		bitmap = imageFilter.makeBlackAndWhite(bitmap);
+		imageFilter.createJpgFromBitmap(bitmap, image);
 
 		Log.v(TAG, "Before baseApi");
 
@@ -391,7 +400,7 @@ public class OCRActivity extends Activity implements
 
 		baseApi.end();
 
-		if (lang.equalsIgnoreCase("eng")) {
+		if (lang.equalsIgnoreCase(lang)) {
 			recognizedText = recognizedText.replaceAll("[^a-zA-Z0-9]+", "");
 		}
 

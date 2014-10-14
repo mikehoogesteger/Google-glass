@@ -16,16 +16,20 @@ public class ImageFilter {
 
 	private static final String TAG = "ImageFilter";
 
-	public ImageFilter(File image) {
+	public ImageFilter(File image, Bitmap bitmap) {
 		Log.i(TAG, "Creating bitmap out of jpg");
-		Bitmap bitmap = makeBitmapOutJpg(image);
-		Log.i(TAG, "Making the image black and white");
-		bitmap = makeBlackAndWhite(bitmap);
+		bitmap = makeBitmapOutJpg(image);
 		Log.i(TAG, "Crop the image");
 		bitmap = cropImage(bitmap);
+		Log.i(TAG, "Making the image black and white");
+		bitmap = makeBlackAndWhite(bitmap);
 		Log.i(TAG, "Saving the black and white image");
 		createJpgFromBitmap(bitmap, image);
-		Log.i(TAG, "Image has been saved");
+		Log.i(TAG, "Image has been saved on " + image.getAbsolutePath().toString());
+	}
+
+	public ImageFilter() {
+		
 	}
 
 	public Bitmap makeBitmapOutJpg(File image) {
@@ -34,23 +38,8 @@ public class ImageFilter {
 	}
 	
 	public Bitmap cropImage(Bitmap image) {
-		image = Bitmap.createBitmap(image, 241, 450, 862, 163);
+		image = Bitmap.createBitmap(image, 365, 434, 567, 130);
 		return image;
-	}
-
-	public Bitmap makeBitmapBlackAndWhite(Bitmap image) {
-		ColorMatrix colorMatrix = new ColorMatrix();
-		colorMatrix.setSaturation(0);
-
-		ColorMatrixColorFilter colorMatrixFilter = new ColorMatrixColorFilter(
-				colorMatrix);
-
-		Bitmap blackAndWhiteBitmap = image.copy(Bitmap.Config.ARGB_8888, true);
-
-		Paint paint = new Paint();
-		paint.setColorFilter(colorMatrixFilter);
-
-		return blackAndWhiteBitmap;
 	}
 
 	public void createJpgFromBitmap(Bitmap bitmap, File imageLocation) {
@@ -65,6 +54,7 @@ public class ImageFilter {
 				if (out != null) {
 					out.close();
 				}
+				Log.i(TAG, "Bestand is opgeslagen onder: " + imageLocation.getName());
 			} catch (IOException e) {
 				Log.e(TAG, "IOException", e);
 			}
@@ -92,7 +82,7 @@ public class ImageFilter {
 				int gray = (int) (0.2989 * R + 0.5870 * G + 0.1140 * B);
 
 				// use 128 as threshold, above -> white, below -> black
-				if (gray > 128)
+				if (gray > 50)
 					gray = 255;
 				else
 					gray = 0;
