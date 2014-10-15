@@ -12,20 +12,33 @@ import android.view.View;
 
 import com.google.android.glass.widget.CardBuilder;
 
+/**
+ * @author Mike Makes an activity for the main screen. This Screen displays text
+ *         and has a menu to start the OCRActivity or stop the application.
+ */
 public class MainActivity extends Activity {
 	private static final String TAG = "MainActivity";
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onCreate(android.os.Bundle)
+	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		View view = new CardBuilder(this, CardBuilder.Layout.MENU)
-	    .setText("Kenteken scanner")
-	    .setFootnote("TAP voor het menu.")
-	    .getView();
-		
+				.setText("Kenteken scanner").setFootnote("TAP voor het menu.")
+				.getView();
+
 		setContentView(view);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onKeyDown(int, android.view.KeyEvent)
+	 */
 	@Override
 	public boolean onKeyDown(int keycode, KeyEvent event) {
 		Log.i(TAG, "onKeyDown");
@@ -39,6 +52,11 @@ public class MainActivity extends Activity {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
@@ -46,6 +64,11 @@ public class MainActivity extends Activity {
 		return true;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
+	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {

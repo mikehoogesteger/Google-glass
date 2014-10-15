@@ -97,7 +97,7 @@ public class ImageFilter {
 				int gray = (int) (0.2989 * red + 0.5870 * green + 0.1140 * blue);
 
 				// use 128 as threshold, above -> white, below -> black
-				if (gray > 50)
+				if (gray > 100)
 					gray = 255;
 				else
 					gray = 0;

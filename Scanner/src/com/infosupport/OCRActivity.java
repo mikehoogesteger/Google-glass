@@ -1,8 +1,10 @@
 package com.infosupport;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -53,11 +55,10 @@ public class OCRActivity extends Activity implements
 	public static final int MEDIA_TYPE_IMAGE = 1;
 	public static final int MEDIA_TYPE_VIDEO = 2;
 
-	public static final String DATA_PATH = Environment
+	private static final String DATA_PATH = Environment
 			.getExternalStorageDirectory().toString() + "/SmartCamera/";
-	public static final String lang = "eng";
+	private static final String lang = "eng";
 	private String mPath;
-	protected static final String PHOTO_TAKEN = "photo_taken";
 
 	/** Create a File for saving an image or video */
 	private static File getOutputMediaFile(int type) {
@@ -100,48 +101,7 @@ public class OCRActivity extends Activity implements
 		Log.v(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 
-		// mCamera.
-
-		String[] paths = new String[] { DATA_PATH, DATA_PATH + "tessdata/" };
-
-		for (String path : paths) {
-			File dir = new File(path);
-			if (!dir.exists()) {
-				if (!dir.mkdirs()) {
-					Log.v(TAG, "ERROR: Creation of directory " + path
-							+ " on sdcard failed");
-					return;
-				} else {
-					Log.v(TAG, "Created directory " + path + " on sdcard");
-				}
-			}
-		}
-
-		if (!(new File(DATA_PATH + "tessdata/" + lang + ".traineddata"))
-				.exists()) {
-			try {
-				AssetManager assetManager = getAssets();
-				InputStream in = assetManager.open("tessdata/" + lang
-						+ ".traineddata");
-				OutputStream out = new FileOutputStream(DATA_PATH + "tessdata/"
-						+ lang + ".traineddata");
-
-				// Transfer bytes from in to out
-				byte[] buf = new byte[1024];
-				int len;
-				while ((len = in.read(buf)) > 0) {
-					out.write(buf, 0, len);
-				}
-				in.close();
-				out.close();
-
-				Log.v(TAG, "Copied " + lang + " traineddata");
-			} catch (IOException e) {
-				Log.e(TAG,
-						"Was unable to copy " + lang + " traineddata "
-								+ e.toString());
-			}
-		}
+		createTessdataFolder();
 
 		setContentView(R.layout.zoom);
 
@@ -376,11 +336,11 @@ public class OCRActivity extends Activity implements
 
 			// Convert to ARGB_8888, required by tess
 			bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-			
+
 		} catch (IOException e) {
 			Log.e(TAG, "Couldn't correct orientation: " + e.toString());
 		}
-		
+
 		ImageFilter imageFilter = new ImageFilter();
 		File image = new File(mPath);
 		bitmap = imageFilter.makeBitmapOutJpg(image);
@@ -390,12 +350,14 @@ public class OCRActivity extends Activity implements
 
 		Log.v(TAG, "Before baseApi");
 
+		appendLog(image.getAbsolutePath().toString());
 		TessBaseAPI baseApi = new TessBaseAPI();
 		baseApi.setDebug(true);
 		baseApi.init(DATA_PATH, lang);
 		baseApi.setImage(bitmap);
 
 		String recognizedText = baseApi.getUTF8Text();
+		appendLog(recognizedText);
 
 		baseApi.end();
 
@@ -416,7 +378,6 @@ public class OCRActivity extends Activity implements
 				b.putString("json", recognizedText);
 				intent.putExtras(b);
 				startActivity(intent);
-//				mCamera.release();
 			} else {
 				Message msg = new Message();
 				msg.obj = "Geen correct kenteken gescand!";
@@ -467,5 +428,75 @@ public class OCRActivity extends Activity implements
 			mInPreview = false;
 		}
 		super.onPause();
+	}
+
+	public void createTessdataFolder() {
+		String[] paths = new String[] { DATA_PATH, DATA_PATH + "tessdata/" };
+
+		for (String path : paths) {
+			File dir = new File(path);
+			if (!dir.exists()) {
+				if (!dir.mkdirs()) {
+					Log.v(TAG, "ERROR: Creation of directory " + path
+							+ " on sdcard failed");
+					return;
+				} else {
+					Log.v(TAG, "Created directory " + path + " on sdcard");
+				}
+			}
+		}
+
+		if (!(new File(DATA_PATH + "tessdata/" + lang + ".traineddata"))
+				.exists()) {
+			try {
+				AssetManager assetManager = getAssets();
+				InputStream in = assetManager.open("tessdata/" + lang
+						+ ".traineddata");
+				OutputStream out = new FileOutputStream(DATA_PATH + "tessdata/"
+						+ lang + ".traineddata");
+
+				// Transfer bytes from in to out
+				byte[] buf = new byte[1024];
+				int len;
+				while ((len = in.read(buf)) > 0) {
+					out.write(buf, 0, len);
+				}
+				in.close();
+				out.close();
+
+				Log.v(TAG, "Copied " + lang + " traineddata");
+			} catch (IOException e) {
+				Log.e(TAG,
+						"Was unable to copy " + lang + " traineddata "
+								+ e.toString());
+			}
+		}
+	}
+
+	public void appendLog(String text) {
+		Log.i(TAG, "Appending log with text " + text);
+		File logFile = new File(DATA_PATH + "log.file");
+		if (!logFile.exists()) {
+			try {
+				Log.i(TAG, "Creating log file");
+				logFile.createNewFile();
+			} catch (IOException e) {
+				Log.e(TAG, "Error while creating log file", e);
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		try {
+			Log.i(TAG, "In try to append message");
+			// BufferedWriter for performance, true to set append to file flag
+			BufferedWriter buf = new BufferedWriter(new FileWriter(logFile,
+					true));
+			buf.append(text);
+			buf.newLine();
+			buf.close();
+		} catch (IOException e) {
+			Log.e(TAG, "Error while appending to log file", e);
+			e.printStackTrace();
+		}
 	}
 }
