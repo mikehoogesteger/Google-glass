@@ -381,7 +381,6 @@ public class OCRActivity extends Activity implements
 			Log.e(TAG, "Couldn't correct orientation: " + e.toString());
 		}
 		
-		//new ImageFilter(new File(mPath), bitmap);
 		ImageFilter imageFilter = new ImageFilter();
 		File image = new File(mPath);
 		bitmap = imageFilter.makeBitmapOutJpg(image);
