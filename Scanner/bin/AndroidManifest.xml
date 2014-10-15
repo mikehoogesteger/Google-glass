@@ -24,11 +24,6 @@
         android:icon="@drawable/ic_scan"
         android:label="@string/app_name" >
         <activity
-            android:name=".MenuActivity"
-            android:enabled="true"
-            android:label="@string/app_name" >
-        </activity>
-        <activity
             android:name=".PreviewActivity"
             android:enabled="true"
             android:label="@string/app_name" >

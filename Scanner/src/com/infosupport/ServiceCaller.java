@@ -12,6 +12,10 @@ import org.json.JSONObject;
 import android.os.AsyncTask;
 import android.util.Log;
 
+/**
+ * @author Mike The ServiceCaller does a call to the rdw api to get data about a
+ *         drivers licence.
+ */
 public class ServiceCaller extends AsyncTask<String, JSONObject, JSONObject> {
 
 	private static final String TAG = "ServiceCaller";
@@ -20,11 +24,25 @@ public class ServiceCaller extends AsyncTask<String, JSONObject, JSONObject> {
 	private String json;
 	private TaskDelegate delegate;
 
+	/**
+	 * This constructor sets the kenteken and gives a delegation that will be
+	 * called when the asyncronical call is done.
+	 * 
+	 * @param kenteken
+	 *            is the drivers licence
+	 * @param delegate
+	 *            is the class that will be called when the task is done
+	 */
 	public ServiceCaller(String kenteken, TaskDelegate delegate) {
 		url += kenteken;
 		this.delegate = delegate;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.os.AsyncTask#doInBackground(Params[])
+	 */
 	@Override
 	protected JSONObject doInBackground(String... params) {
 		JSONObject obj = null;
@@ -55,6 +73,11 @@ public class ServiceCaller extends AsyncTask<String, JSONObject, JSONObject> {
 		return obj;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+	 */
 	@Override
 	protected void onPostExecute(JSONObject result) {
 		delegate.taskCompletionResult(result);

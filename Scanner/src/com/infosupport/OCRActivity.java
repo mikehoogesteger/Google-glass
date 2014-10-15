@@ -1,10 +1,8 @@
 package com.infosupport;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -36,6 +34,10 @@ import android.widget.Toast;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
 
+/**
+ * @author Mike OCRActivity makes a picture and then uses Tesseract to read the
+ *         license.
+ */
 public class OCRActivity extends Activity implements
 		GestureDetector.OnGestureListener, Camera.OnZoomChangeListener,
 		Runnable {
@@ -60,7 +62,13 @@ public class OCRActivity extends Activity implements
 	private static final String lang = "eng";
 	private String mPath;
 
-	/** Create a File for saving an image or video */
+	/**
+	 * Makes a file to store the captured picture on.
+	 * 
+	 * @param type
+	 *            the type of media. This can be a video or image.
+	 * @return a path to the place where an image can be stored.
+	 */
 	private static File getOutputMediaFile(int type) {
 		// To be safe, you should check that the SDCard is mounted
 		// using Environment.getExternalStorageState() before doing this.
@@ -96,6 +104,11 @@ public class OCRActivity extends Activity implements
 		return mediaFile;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onCreate(android.os.Bundle)
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		Log.v(TAG, "onCreate");
@@ -178,17 +191,34 @@ public class OCRActivity extends Activity implements
 		}
 	};
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onGenericMotionEvent(android.view.MotionEvent)
+	 */
 	@Override
 	public boolean onGenericMotionEvent(MotionEvent event) {
 		mGestureDetector.onTouchEvent(event);
 		return true;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.view.GestureDetector.OnGestureListener#onDown(android.view.
+	 * MotionEvent)
+	 */
 	@Override
 	public boolean onDown(MotionEvent e) {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.view.GestureDetector.OnGestureListener#onFling(android.view.
+	 * MotionEvent, android.view.MotionEvent, float, float)
+	 */
 	@Override
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 			float velocityY) {
@@ -210,10 +240,6 @@ public class OCRActivity extends Activity implements
 				zoom = parameters.getMaxZoom();
 		}
 
-		// Applications can call stopSmoothZoom() to stop the zoom earlier.
-		// Applications should not call startSmoothZoom
-		// again or change the zoom value before zoom stops, or the app will
-		// crash!
 		try {
 			mCamera.stopSmoothZoom();
 			mCamera.startSmoothZoom(zoom);
@@ -224,27 +250,61 @@ public class OCRActivity extends Activity implements
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * android.view.GestureDetector.OnGestureListener#onLongPress(android.view
+	 * .MotionEvent)
+	 */
 	@Override
 	public void onLongPress(MotionEvent e) {
 		Log.v(TAG, "onLongPress");
 		finish();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * android.view.GestureDetector.OnGestureListener#onScroll(android.view.
+	 * MotionEvent, android.view.MotionEvent, float, float)
+	 */
 	@Override
 	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
 			float distanceY) {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * android.view.GestureDetector.OnGestureListener#onShowPress(android.view
+	 * .MotionEvent)
+	 */
 	@Override
 	public void onShowPress(MotionEvent e) {
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * android.view.GestureDetector.OnGestureListener#onSingleTapUp(android.
+	 * view.MotionEvent)
+	 */
 	@Override
 	public boolean onSingleTapUp(MotionEvent e) {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.hardware.Camera.OnZoomChangeListener#onZoomChange(int,
+	 * boolean, android.hardware.Camera)
+	 */
 	@Override
 	public void onZoomChange(int zoomValue, boolean stopped, Camera camera) {
 		mZoomLevelView.setText("ZOOM: " + zoomValue);
@@ -291,6 +351,11 @@ public class OCRActivity extends Activity implements
 		}
 	};
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Runnable#run()
+	 */
 	public void run() {
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inSampleSize = 4;
@@ -350,14 +415,12 @@ public class OCRActivity extends Activity implements
 
 		Log.v(TAG, "Before baseApi");
 
-		appendLog(image.getAbsolutePath().toString());
 		TessBaseAPI baseApi = new TessBaseAPI();
 		baseApi.setDebug(true);
 		baseApi.init(DATA_PATH, lang);
 		baseApi.setImage(bitmap);
 
 		String recognizedText = baseApi.getUTF8Text();
-		appendLog(recognizedText);
 
 		baseApi.end();
 
@@ -399,6 +462,11 @@ public class OCRActivity extends Activity implements
 		}
 	};
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onKeyDown(int, android.view.KeyEvent)
+	 */
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		Log.v(TAG, "onKeyDown");
@@ -411,12 +479,22 @@ public class OCRActivity extends Activity implements
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onResume()
+	 */
 	@Override
 	public void onResume() {
 		Log.v(TAG, "onResume");
 		super.onResume();
 	};
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onPause()
+	 */
 	@Override
 	public void onPause() {
 		Log.v(TAG, "onPause");
@@ -430,6 +508,10 @@ public class OCRActivity extends Activity implements
 		super.onPause();
 	}
 
+	/**
+	 * Creates a folder for the tessdata in case it doesn't exist. Then copies
+	 * the traineddata to the glass.
+	 */
 	public void createTessdataFolder() {
 		String[] paths = new String[] { DATA_PATH, DATA_PATH + "tessdata/" };
 
@@ -470,33 +552,6 @@ public class OCRActivity extends Activity implements
 						"Was unable to copy " + lang + " traineddata "
 								+ e.toString());
 			}
-		}
-	}
-
-	public void appendLog(String text) {
-		Log.i(TAG, "Appending log with text " + text);
-		File logFile = new File(DATA_PATH + "log.file");
-		if (!logFile.exists()) {
-			try {
-				Log.i(TAG, "Creating log file");
-				logFile.createNewFile();
-			} catch (IOException e) {
-				Log.e(TAG, "Error while creating log file", e);
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		try {
-			Log.i(TAG, "In try to append message");
-			// BufferedWriter for performance, true to set append to file flag
-			BufferedWriter buf = new BufferedWriter(new FileWriter(logFile,
-					true));
-			buf.append(text);
-			buf.newLine();
-			buf.close();
-		} catch (IOException e) {
-			Log.e(TAG, "Error while appending to log file", e);
-			e.printStackTrace();
 		}
 	}
 }

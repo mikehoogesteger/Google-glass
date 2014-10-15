@@ -18,6 +18,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+/**
+ * @author Mike ResultActivity fills the resultpage with information about the
+ *         license plate.
+ */
 public class ResultActivity extends Activity implements TaskDelegate {
 	private static final String TAG = "ResultActivity";
 	private TextView mKenteken;
@@ -27,6 +31,11 @@ public class ResultActivity extends Activity implements TaskDelegate {
 	private String kenteken;
 	private ServiceCaller sc;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onCreate(android.os.Bundle)
+	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -36,6 +45,11 @@ public class ResultActivity extends Activity implements TaskDelegate {
 		sc.execute();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onKeyDown(int, android.view.KeyEvent)
+	 */
 	@Override
 	public boolean onKeyDown(int keycode, KeyEvent event) {
 		Log.i(TAG, "onKeyDown");
@@ -49,6 +63,11 @@ public class ResultActivity extends Activity implements TaskDelegate {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
@@ -56,6 +75,11 @@ public class ResultActivity extends Activity implements TaskDelegate {
 		return true;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
+	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -77,18 +101,26 @@ public class ResultActivity extends Activity implements TaskDelegate {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.infosupport.TaskDelegate#taskCompletionResult(org.json.JSONObject)
+	 */
 	@Override
 	public void taskCompletionResult(JSONObject result) {
 		Log.i(TAG, result.toString());
 		setContentView(R.layout.result);
-		
+
 		try {
 			String verzekerd = result.getJSONObject("resource").getString(
 					"WAMverzekerdgeregistreerd");
 			String apk = result.getJSONObject("resource").getString(
 					"VervaldatumAPK");
-			Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US).parse(apk);
-			String formattedApk = new SimpleDateFormat("dd/MM/yyyy", Locale.US).format(date);
+			Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
+					.parse(apk);
+			String formattedApk = new SimpleDateFormat("dd/MM/yyyy", Locale.US)
+					.format(date);
 
 			mKenteken = (TextView) findViewById(R.id.kenteken);
 			mVerzekerd = (TextView) findViewById(R.id.verzekerd);
@@ -112,7 +144,8 @@ public class ResultActivity extends Activity implements TaskDelegate {
 				Log.e(TAG, "catch -> error niet gevonden");
 				e1.printStackTrace();
 			}
-			Log.e(TAG, "catch -> resource niet gevonden | datum kan niet geparst worden");
+			Log.e(TAG,
+					"catch -> resource niet gevonden | datum kan niet geparst worden");
 			e.printStackTrace();
 		}
 	}
