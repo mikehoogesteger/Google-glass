@@ -110,9 +110,11 @@ public class KentekenValidator {
 	 */
 	public String makeAValidPart(String part) {
 		if (hasAnI(part)) {
-			if (hasADigit(part) || part.length() == 1) {
+			if ((part.length() == 2 && hasADigit(part)) || part.length() == 1) {
 				return makeItAllDigit(part);
 			}
+		} else if (part.length() == 3) {
+			return makeItAllText(part);
 		}
 		return part;
 	}
@@ -126,6 +128,12 @@ public class KentekenValidator {
 	 */
 	public String makeItAllDigit(String part) {
 		part = part.replaceAll("I", "1");
+		part = part.replaceAll("O", "0");
+		return part;
+	}
+	
+	public String makeItAllText(String part) {
+		part = part.replaceAll("0", "O");
 		return part;
 	}
 }
