@@ -422,10 +422,9 @@ public class OCRActivity extends Activity implements
 		baseApi.end();
 
 		if (lang.equalsIgnoreCase(lang)) {
-			recognizedText = recognizedText.replaceAll("[^a-zA-Z0-9]+", "");
+			KentekenValidator kentekenValidator = new KentekenValidator();
+			recognizedText = kentekenValidator.makeAValidKentekenOutOfThis(recognizedText);
 		}
-
-		recognizedText = recognizedText.trim();
 
 		if (recognizedText.length() != 0) {
 			Log.v(TAG, ">>>> " + recognizedText);
