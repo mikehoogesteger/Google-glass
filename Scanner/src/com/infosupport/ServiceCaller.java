@@ -63,12 +63,10 @@ public class ServiceCaller extends AsyncTask<String, JSONObject, JSONObject> {
 			try {
 				obj = new JSONObject(json);
 			} catch (JSONException e) {
-				Log.e(TAG, "JSON error");
-				e.printStackTrace();
+				Log.e(TAG, "JSON error", e);
 			}
 		} catch (IOException e) {
-			Log.e(TAG, "Connection eror");
-			e.printStackTrace();
+			Log.e(TAG, "Connection error / no internet", e);
 		}
 		return obj;
 	}

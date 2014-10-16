@@ -11,13 +11,14 @@ import java.util.Date;
 import java.util.Locale;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.hardware.Camera;
-import android.media.ExifInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -359,50 +360,6 @@ public class OCRActivity extends Activity implements
 
 		Bitmap bitmap = BitmapFactory.decodeFile(mPath, options);
 
-		try {
-			ExifInterface exif = new ExifInterface(mPath);
-			int exifOrientation = exif.getAttributeInt(
-					ExifInterface.TAG_ORIENTATION,
-					ExifInterface.ORIENTATION_NORMAL);
-
-			Log.v(TAG, "Orient: " + exifOrientation);
-
-			int rotate = 0;
-
-			switch (exifOrientation) {
-			case ExifInterface.ORIENTATION_ROTATE_90:
-				rotate = 90;
-				break;
-			case ExifInterface.ORIENTATION_ROTATE_180:
-				rotate = 180;
-				break;
-			case ExifInterface.ORIENTATION_ROTATE_270:
-				rotate = 270;
-				break;
-			}
-
-			Log.v(TAG, "Rotation: " + rotate);
-
-			if (rotate != 0) {
-				// Getting width & height of the given image.
-				int w = bitmap.getWidth();
-				int h = bitmap.getHeight();
-
-				// Setting pre rotate
-				Matrix mtx = new Matrix();
-				mtx.preRotate(rotate);
-
-				// Rotating Bitmap
-				bitmap = Bitmap.createBitmap(bitmap, 0, 0, w, h, mtx, false);
-			}
-
-			// Convert to ARGB_8888, required by tess
-			bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-
-		} catch (IOException e) {
-			Log.e(TAG, "Couldn't correct orientation: " + e.toString());
-		}
-
 		ImageFilter imageFilter = new ImageFilter();
 		File image = new File(mPath);
 		bitmap = imageFilter.makeBitmapOutJpg(image);
@@ -410,22 +367,19 @@ public class OCRActivity extends Activity implements
 		bitmap = imageFilter.makeBlackAndWhite(bitmap);
 		imageFilter.createJpgFromBitmap(bitmap, image);
 
-		Log.v(TAG, "Before baseApi");
+		String recognizedText = initiateTesseract(bitmap);
 
-		TessBaseAPI baseApi = new TessBaseAPI();
-		baseApi.setDebug(true);
-		baseApi.init(DATA_PATH, lang);
-		baseApi.setImage(bitmap);
+		showResult(recognizedText);
+	}
 
-		String recognizedText = baseApi.getUTF8Text();
-
-		baseApi.end();
-
-		if (lang.equalsIgnoreCase(lang)) {
-			KentekenValidator kentekenValidator = new KentekenValidator();
-			recognizedText = kentekenValidator.makeAValidKentekenOutOfThis(recognizedText);
-		}
-
+	/**
+	 * Show result of the recognized text by using a ResultActivity, if the text
+	 * is 6 characters long it means it has found a correct kenteken.
+	 * 
+	 * @param recognizedText
+	 *            is the text that the OCR reader has found
+	 */
+	private void showResult(String recognizedText) {
 		if (recognizedText.length() != 0) {
 			Log.v(TAG, ">>>> " + recognizedText);
 
@@ -440,6 +394,9 @@ public class OCRActivity extends Activity implements
 			} else {
 				Message msg = new Message();
 				msg.obj = "Geen correct kenteken gescand!";
+				if (!isWiFiConnected(this)) {
+					msg.obj = "U bent niet verbonden met het internet!";
+				}
 				mHandler.sendMessage(msg);
 				Intent intent = new Intent(this, OCRActivity.class);
 				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -447,6 +404,42 @@ public class OCRActivity extends Activity implements
 				startActivity(intent);
 			}
 		}
+	}
+	
+	public static boolean isWiFiConnected(Context context) {
+	    ConnectivityManager conMan = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo.State wifi = conMan.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState();
+	    if (wifi == NetworkInfo.State.CONNECTED || wifi == NetworkInfo.State.CONNECTING)
+	        return true;
+	    return false;
+	}
+
+	/**
+	 * This is the calling to the tesseract API that tries to read the text in
+	 * the given bitmap.
+	 * 
+	 * @param bitmap
+	 *            the image of the kenteken
+	 * @return the recognized text that was found while reading the kenteken
+	 */
+	private String initiateTesseract(Bitmap bitmap) {
+		Log.v(TAG, "Before baseApi");
+
+		TessBaseAPI baseApi = new TessBaseAPI();
+		baseApi.setDebug(true);
+		baseApi.init(DATA_PATH, lang);
+		baseApi.setImage(bitmap);
+
+		String recognizedText = baseApi.getUTF8Text();
+
+		baseApi.end();
+
+		if (lang.equalsIgnoreCase(lang)) {
+			KentekenValidator kentekenValidator = new KentekenValidator();
+			recognizedText = kentekenValidator
+					.makeAValidKentekenOutOfThis(recognizedText);
+		}
+		return recognizedText;
 	}
 
 	Handler mHandler = new Handler() {
