@@ -7,6 +7,7 @@ int drawable border 0x7f020000
 int drawable ic_launcher 0x7f020001
 int drawable ic_scan 0x7f020002
 int drawable ic_stop 0x7f020003
+int drawable license 0x7f020004
 int id apk 0x7f0a0003
 int id borderView 0x7f0a0005
 int id error 0x7f0a0004

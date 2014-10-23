@@ -149,4 +149,10 @@ public class ResultActivity extends Activity implements TaskDelegate {
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public void taskCompletionResult(String result) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -50,11 +50,11 @@ public class ImageFilter {
 	 * @param imageLocation
 	 *            is the location where the bitmap will be saved to
 	 */
-	public void createJpgFromBitmap(Bitmap bitmap, File imageLocation) {
+	public File createJpgFromBitmap(Bitmap bitmap, File imageLocation) {
 		FileOutputStream out = null;
 		try {
 			out = new FileOutputStream(imageLocation);
-			bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+			bitmap.compress(Bitmap.CompressFormat.JPEG, 92, out);
 		} catch (Exception e) {
 			Log.e(TAG, "Exception", e);
 		} finally {
@@ -69,6 +69,7 @@ public class ImageFilter {
 				Log.e(TAG, "IOException", e);
 			}
 		}
+		return imageLocation;
 	}
 
 	/**

@@ -10,6 +10,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -41,7 +43,7 @@ import com.googlecode.tesseract.android.TessBaseAPI;
  */
 public class OCRActivity extends Activity implements
 		GestureDetector.OnGestureListener, Camera.OnZoomChangeListener,
-		Runnable {
+		Runnable, TaskDelegate {
 	public static String TAG = "OCRActivity";
 
 	public static float FULL_DISTANCE = 8000.0f;
@@ -362,14 +364,18 @@ public class OCRActivity extends Activity implements
 
 		ImageFilter imageFilter = new ImageFilter();
 		File image = new File(mPath);
+		
+		
+//		Log.i(TAG, image.exists() + " exists?");
 		bitmap = imageFilter.makeBitmapOutJpg(image);
 		bitmap = imageFilter.cropImage(bitmap);
 		bitmap = imageFilter.makeBlackAndWhite(bitmap);
 		imageFilter.createJpgFromBitmap(bitmap, image);
+		OCRServiceCaller sv = new OCRServiceCaller(this, image);
+		sv.execute();
+		//String recognizedText = initiateTesseract(bitmap);
 
-		String recognizedText = initiateTesseract(bitmap);
-
-		showResult(recognizedText);
+		
 	}
 
 	/**
@@ -542,5 +548,18 @@ public class OCRActivity extends Activity implements
 								+ e.toString());
 			}
 		}
+	}
+
+	@Override
+	public void taskCompletionResult(JSONObject result) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void taskCompletionResult(String result) {
+		KentekenValidator kv = new KentekenValidator();
+		result = kv.makeAValidKentekenOutOfThis(result);
+		showResult(result);
 	}
 }
