@@ -359,23 +359,9 @@ public class OCRActivity extends Activity implements
 	public void run() {
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inSampleSize = 4;
-
-		Bitmap bitmap = BitmapFactory.decodeFile(mPath, options);
-
-		ImageFilter imageFilter = new ImageFilter();
 		File image = new File(mPath);
-		
-		
-//		Log.i(TAG, image.exists() + " exists?");
-		bitmap = imageFilter.makeBitmapOutJpg(image);
-		bitmap = imageFilter.cropImage(bitmap);
-		bitmap = imageFilter.makeBlackAndWhite(bitmap);
-		imageFilter.createJpgFromBitmap(bitmap, image);
 		OCRServiceCaller sv = new OCRServiceCaller(this, image);
 		sv.execute();
-		//String recognizedText = initiateTesseract(bitmap);
-
-		
 	}
 
 	/**
@@ -418,34 +404,6 @@ public class OCRActivity extends Activity implements
 	    if (wifi == NetworkInfo.State.CONNECTED || wifi == NetworkInfo.State.CONNECTING)
 	        return true;
 	    return false;
-	}
-
-	/**
-	 * This is the calling to the tesseract API that tries to read the text in
-	 * the given bitmap.
-	 * 
-	 * @param bitmap
-	 *            the image of the kenteken
-	 * @return the recognized text that was found while reading the kenteken
-	 */
-	private String initiateTesseract(Bitmap bitmap) {
-		Log.v(TAG, "Before baseApi");
-
-		TessBaseAPI baseApi = new TessBaseAPI();
-		baseApi.setDebug(true);
-		baseApi.init(DATA_PATH, lang);
-		baseApi.setImage(bitmap);
-
-		String recognizedText = baseApi.getUTF8Text();
-
-		baseApi.end();
-
-		if (lang.equalsIgnoreCase(lang)) {
-			KentekenValidator kentekenValidator = new KentekenValidator();
-			recognizedText = kentekenValidator
-					.makeAValidKentekenOutOfThis(recognizedText);
-		}
-		return recognizedText;
 	}
 
 	Handler mHandler = new Handler() {
@@ -552,14 +510,8 @@ public class OCRActivity extends Activity implements
 
 	@Override
 	public void taskCompletionResult(JSONObject result) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void taskCompletionResult(String result) {
-		KentekenValidator kv = new KentekenValidator();
-		result = kv.makeAValidKentekenOutOfThis(result);
-		showResult(result);
+//		KentekenValidator kv = new KentekenValidator();
+//		result = kv.makeAValidKentekenOutOfThis(result.to);
+//		showResult(result);
 	}
 }

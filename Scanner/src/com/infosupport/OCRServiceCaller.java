@@ -1,23 +1,31 @@
 package com.infosupport;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.multipart.FilePart;
+import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
+import org.apache.commons.httpclient.methods.multipart.Part;
+import org.apache.commons.httpclient.methods.multipart.StringPart;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.os.AsyncTask;
 
-public class OCRServiceCaller extends AsyncTask<String, String, String> {
+public class OCRServiceCaller extends AsyncTask<String, JSONObject, JSONObject> {
+	
+	private final String UPLOADURL = "http://demo.openalpr.com:8010/upload";
+	private final String GETURL = "http://demo.openalpr.com:8010/status?nonce=123456789";
 	
 	private File image;
 	private TaskDelegate delegate;
@@ -28,75 +36,90 @@ public class OCRServiceCaller extends AsyncTask<String, String, String> {
 	}
 
 	@Override
-	protected String doInBackground(String... params) {
-		HttpClient httpclient = new DefaultHttpClient();
-    	HttpPost httppost = new HttpPost("http://api.ocrapiservice.com/1.0/rest/ocr");
-
-    	FileBody bin = new FileBody(image);
-    	StringBody language = null;
-		try {
-			language = new StringBody("en");
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	StringBody apikey = null;
-		try {
-			apikey = new StringBody("xFCzm3UYfS");
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-    	MultipartEntity reqEntity = new MultipartEntity();
-    	reqEntity.addPart("image", bin);
-    	reqEntity.addPart("language", language);
-    	reqEntity.addPart("apikey", apikey);
-    	httppost.setEntity(reqEntity);
-
-    	HttpResponse response = null;
-		try {
-			response = httpclient.execute(httppost);
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	HttpEntity resEntity = response.getEntity();  
-    	final StringBuilder sb = new StringBuilder();
-		if (resEntity != null) {
-	    	InputStream stream = null;
+	protected JSONObject doInBackground(String... params) {
+		postData(UPLOADURL, image);
+		int job_status = 1;
+		JSONObject json = null;
+		while (job_status < 3) {
 			try {
-				stream = resEntity.getContent();
-			} catch (IllegalStateException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Thread.sleep(200);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
 			}
-	    	byte bytes[] = new byte[4096];
-	    	int numBytes;
-	    	try {
-				while ((numBytes=stream.read(bytes))!=-1) {
-					if (numBytes!=0) {
-						sb.append(new String(bytes, 0, numBytes));
-					}
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
+			json = doGet(GETURL);
+			try {
+				job_status = Integer.parseInt(json.get("job_status").toString());
+			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		}
-		return sb.toString();
+		return json;
 	}
 	
 	@Override
-	protected void onPostExecute(String result) {
+	protected void onPostExecute(JSONObject result) {
+		System.out.println(result.toString() + "FROM POSTEXECUTE");
 		delegate.taskCompletionResult(result);
 		super.onPostExecute(result);
+	}
+	
+	public static void postData(String urlString, File file) {
+		int status = 0;
+	    try {
+	        PostMethod postMessage = new PostMethod(urlString);
+	        Part[] parts = {
+	        		new FilePart("lpimage", file),
+	                new StringPart("country", "eu"),
+	                new StringPart("nonce", "123456789")
+	        };
+	        postMessage.setRequestEntity(new MultipartRequestEntity(parts, postMessage.getParams()));
+	        HttpClient client = new HttpClient();
+
+	        status = client.executeMethod(postMessage);
+	    } catch (HttpException e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+	    } catch (IOException e) {
+	        //  TODO Auto-generated catch block
+	        e.printStackTrace();
+	    }  
+	    System.out.println(status);
+	}
+	
+	public static JSONObject doGet(String urlString) {
+		String json = null;
+		try {
+			URL url = new URL(urlString);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("GET");
+			conn.setRequestProperty("Accept", "application/json");
+
+			if (conn.getResponseCode() != 200) {
+				throw new RuntimeException("Failed : HTTP error code : "
+						+ conn.getResponseCode());
+			}
+
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+					(conn.getInputStream())));
+
+			String output;
+			while ((output = br.readLine()) != null) {
+				json = output;
+				System.out.println(json + "from doGet");
+			}
+			conn.disconnect();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		JSONObject jsonObject = null;
+		try {
+			jsonObject = new JSONObject(json);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return jsonObject;
 	}
 
 	

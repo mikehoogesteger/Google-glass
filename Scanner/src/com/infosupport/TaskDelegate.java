@@ -16,6 +16,4 @@ public interface TaskDelegate {
 	 */
 	public void taskCompletionResult(JSONObject result);
 
-	public void taskCompletionResult(String result);
-
 }

@@ -29,7 +29,7 @@ public class ResultActivity extends Activity implements TaskDelegate {
 	private TextView mAPK;
 	private TextView mError;
 	private String kenteken;
-	private ServiceCaller sc;
+	private KentekenServiceCaller sc;
 
 	/*
 	 * (non-Javadoc)
@@ -41,7 +41,7 @@ public class ResultActivity extends Activity implements TaskDelegate {
 		super.onCreate(savedInstanceState);
 		Bundle b = getIntent().getExtras();
 		kenteken = b.getString("json");
-		sc = new ServiceCaller(kenteken, this);
+		sc = new KentekenServiceCaller(kenteken, this);
 		sc.execute();
 	}
 
@@ -148,11 +148,5 @@ public class ResultActivity extends Activity implements TaskDelegate {
 					"catch -> resource niet gevonden | datum kan niet geparst worden");
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public void taskCompletionResult(String result) {
-		// TODO Auto-generated method stub
-		
 	}
 }
