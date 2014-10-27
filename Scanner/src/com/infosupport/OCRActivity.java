@@ -7,16 +7,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.net.ConnectivityManager;
@@ -34,8 +37,6 @@ import android.view.SurfaceView;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.googlecode.tesseract.android.TessBaseAPI;
 
 /**
  * @author Mike OCRActivity makes a picture and then uses Tesseract to read the
@@ -371,30 +372,29 @@ public class OCRActivity extends Activity implements
 	 * @param recognizedText
 	 *            is the text that the OCR reader has found
 	 */
-	private void showResult(String recognizedText) {
-		if (recognizedText.length() != 0) {
-			Log.v(TAG, ">>>> " + recognizedText);
-
-			if (recognizedText.length() == 6) {
-				Intent intent = new Intent(this, ResultActivity.class);
-				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				Bundle b = new Bundle();
-				b.putString("json", recognizedText);
-				intent.putExtras(b);
-				startActivity(intent);
-			} else {
-				Message msg = new Message();
-				msg.obj = "Geen correct kenteken gescand!";
-				if (!isWiFiConnected(this)) {
-					msg.obj = "U bent niet verbonden met het internet!";
-				}
-				mHandler.sendMessage(msg);
-				Intent intent = new Intent(this, OCRActivity.class);
-				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				startActivity(intent);
+	private void showResult(List<String> kentekens) {
+		if (kentekens.size() > 0) {
+			Log.v(TAG, ">>>> " + kentekens);
+			
+			Intent intent = new Intent(this, ResultActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			Bundle b = new Bundle();
+			b.putStringArrayList("json", (ArrayList<String>) kentekens);
+			intent.putExtras(b);
+			startActivity(intent);
+			
+		} else {
+			Message msg = new Message();
+			msg.obj = "Geen correct kenteken gescand!";
+			if (!isWiFiConnected(this)) {
+				msg.obj = "U bent niet verbonden met het internet!";
 			}
+			mHandler.sendMessage(msg);
+			Intent intent = new Intent(this, OCRActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			startActivity(intent);
 		}
 	}
 	
@@ -510,8 +510,29 @@ public class OCRActivity extends Activity implements
 
 	@Override
 	public void taskCompletionResult(JSONObject result) {
-//		KentekenValidator kv = new KentekenValidator();
-//		result = kv.makeAValidKentekenOutOfThis(result.to);
-//		showResult(result);
+		List<String> kentekens = new ArrayList<String>();
+		try {
+			kentekens = getAllKentekensFromJSON(result);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		showResult(kentekens);
+	}
+	
+	public List<String> getAllKentekensFromJSON(JSONObject json) throws JSONException {
+		List<String> kentekens = new ArrayList<String>();
+		int jobstatus = Integer.parseInt(json.get("job_status").toString());
+		if (jobstatus == 3) {
+			JSONObject plates = json.getJSONObject("plates");
+			JSONArray plateArray = plates.getJSONArray("results");
+			for (int i = 0; i < plateArray.length(); i++) {
+				String kenteken = plateArray.getJSONObject(i).get("plate").toString();
+				if (kenteken != null && kenteken.length() == 6) {
+					kentekens.add(kenteken);
+				}
+			}
+		}
+		return kentekens;
 	}
 }

@@ -2,6 +2,7 @@ package com.infosupport;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -28,7 +29,7 @@ public class ResultActivity extends Activity implements TaskDelegate {
 	private TextView mVerzekerd;
 	private TextView mAPK;
 	private TextView mError;
-	private String kenteken;
+	private ArrayList<String> kenteken;
 	private KentekenServiceCaller sc;
 
 	/*
@@ -40,7 +41,7 @@ public class ResultActivity extends Activity implements TaskDelegate {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Bundle b = getIntent().getExtras();
-		kenteken = b.getString("json");
+		kenteken = b.getStringArrayList("json");
 		sc = new KentekenServiceCaller(kenteken, this);
 		sc.execute();
 	}
@@ -109,44 +110,49 @@ public class ResultActivity extends Activity implements TaskDelegate {
 	 */
 	@Override
 	public void taskCompletionResult(JSONObject result) {
-		Log.i(TAG, result.toString());
+		// Log.i(TAG, result.toString());
 		setContentView(R.layout.result);
-
-		try {
-			String verzekerd = result.getJSONObject("resource").getString(
-					"WAMverzekerdgeregistreerd");
-			String apk = result.getJSONObject("resource").getString(
-					"VervaldatumAPK");
-			Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
-					.parse(apk);
-			String formattedApk = new SimpleDateFormat("dd/MM/yyyy", Locale.US)
-					.format(date);
-
-			mKenteken = (TextView) findViewById(R.id.kenteken);
+		if (result == null) {
 			mVerzekerd = (TextView) findViewById(R.id.verzekerd);
-			mAPK = (TextView) findViewById(R.id.apk);
-
-			mKenteken.setText("Kenteken: " + kenteken);
-			if (verzekerd == "true") {
-				mVerzekerd.setText("Verzekerd: Ja");
-			} else {
-				mVerzekerd.setText("Verzekerd: Nee");
-			}
-			mAPK.setText("APK verloopt op: " + formattedApk);
-		} catch (JSONException | ParseException e) {
+			mVerzekerd.setText("Er is niets aan de hand");
+		} else {
 			try {
-				String error = result.getJSONObject("error").getString(
-						"message");
+				String kenteken = result.getJSONObject("resource").getString("Kenteken");
+				String verzekerd = result.getJSONObject("resource").getString(
+						"WAMverzekerdgeregistreerd");
+				String apk = result.getJSONObject("resource").getString(
+						"VervaldatumAPK");
+				Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss",
+						Locale.US).parse(apk);
+				String formattedApk = new SimpleDateFormat("dd/MM/yyyy",
+						Locale.US).format(date);
 
-				mError = (TextView) findViewById(R.id.error);
-				mError.setText(error);
-			} catch (JSONException e1) {
-				Log.e(TAG, "catch -> error niet gevonden");
-				e1.printStackTrace();
+				mKenteken = (TextView) findViewById(R.id.kenteken);
+				mVerzekerd = (TextView) findViewById(R.id.verzekerd);
+				mAPK = (TextView) findViewById(R.id.apk);
+
+				mKenteken.setText("Kenteken: " + kenteken);
+				if (verzekerd == "true") {
+					mVerzekerd.setText("Verzekerd: Ja");
+				} else {
+					mVerzekerd.setText("Verzekerd: Nee");
+				}
+				mAPK.setText("APK verloopt op: " + formattedApk);
+			} catch (JSONException | ParseException e) {
+				try {
+					String error = result.getJSONObject("error").getString(
+							"message");
+
+					mError = (TextView) findViewById(R.id.error);
+					mError.setText(error);
+				} catch (JSONException e1) {
+					Log.e(TAG, "catch -> error niet gevonden");
+					e1.printStackTrace();
+				}
+				Log.e(TAG,
+						"catch -> resource niet gevonden | datum kan niet geparst worden");
+				e.printStackTrace();
 			}
-			Log.e(TAG,
-					"catch -> resource niet gevonden | datum kan niet geparst worden");
-			e.printStackTrace();
 		}
 	}
 }

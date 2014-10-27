@@ -82,8 +82,7 @@ public class OCRServiceCaller extends AsyncTask<String, JSONObject, JSONObject> 
 	    } catch (IOException e) {
 	        //  TODO Auto-generated catch block
 	        e.printStackTrace();
-	    }  
-	    System.out.println(status);
+	    }
 	}
 	
 	public static JSONObject doGet(String urlString) {
