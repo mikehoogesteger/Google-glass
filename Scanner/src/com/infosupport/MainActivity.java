@@ -17,6 +17,7 @@ import com.google.android.glass.widget.CardBuilder;
  *         and has a menu to start the OCRActivity or stop the application.
  */
 public class MainActivity extends Activity {
+	
 	private static final String TAG = "MainActivity";
 
 	/*

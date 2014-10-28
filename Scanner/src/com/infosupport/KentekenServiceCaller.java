@@ -24,8 +24,9 @@ import android.util.Log;
  */
 public class KentekenServiceCaller extends AsyncTask<String, JSONObject, JSONObject> {
 
-	private static final String TAG = "ServiceCaller";
+	private static final String TAG = "KentekenServiceCaller";
 	private static final String BASE_URL = "http://rdw.almere.pilod.nl/kentekens/";
+	
 	private String url = BASE_URL;
 	private String json;
 	private ArrayList<String> kentekens;

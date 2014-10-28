@@ -24,6 +24,7 @@ public class OCRServiceCaller extends AsyncTask<String, JSONObject, JSONObject> 
 	private static final String TAG = "OCRServiceCaller";
 	private static final String UPLOADURL = "http://demo.openalpr.com:8010/upload";
 	private static final String GETURL = "http://demo.openalpr.com:8010/status?nonce=123456789";
+	
 	public static final int READY = 3;
 	
 	private File image;

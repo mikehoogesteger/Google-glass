@@ -44,9 +44,9 @@ public class OCRActivity extends Activity implements
 		GestureDetector.OnGestureListener, Camera.OnZoomChangeListener,
 		Runnable, TaskDelegate {
 	
+	private static final String TAG = "OCRActivity";
 	private static final int MEDIA_TYPE_IMAGE = 1;
 	private static final int KENTEKEN_SIZE = 6;
-	private static final String TAG = "OCRActivity";
 
 	private SurfaceView mPreview;
 	private SurfaceHolder mPreviewHolder;

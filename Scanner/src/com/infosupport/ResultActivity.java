@@ -24,7 +24,9 @@ import android.widget.TextView;
  *         license plate.
  */
 public class ResultActivity extends Activity implements TaskDelegate {
+	
 	private static final String TAG = "ResultActivity";
+	
 	private TextView mKenteken;
 	private TextView mVerzekerd;
 	private TextView mAPK;
