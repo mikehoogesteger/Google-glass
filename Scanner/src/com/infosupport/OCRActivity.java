@@ -14,7 +14,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -24,8 +23,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -43,7 +40,7 @@ import android.widget.Toast;
 public class OCRActivity extends Activity implements
 		GestureDetector.OnGestureListener, Camera.OnZoomChangeListener,
 		Runnable, TaskDelegate {
-	
+
 	private static final String TAG = "OCRActivity";
 	private static final int MEDIA_TYPE_IMAGE = 1;
 	private static final int KENTEKEN_SIZE = 6;
@@ -118,8 +115,6 @@ public class OCRActivity extends Activity implements
 
 		mZoomLevelView = (TextView) findViewById(R.id.zoomLevel);
 
-		// commented to test the press of Camera button during preview;
-		// otherwise long press would take the picture
 		mGestureDetector = new GestureDetector(this, this);
 
 		mCamera = Camera.open();
@@ -364,7 +359,7 @@ public class OCRActivity extends Activity implements
 	private void showResult(List<String> kentekens) {
 		if (kentekens.size() > 0) {
 			Log.v(TAG, ">>>> " + kentekens);
-			
+
 			Intent intent = new Intent(this, ResultActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
 			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -372,38 +367,31 @@ public class OCRActivity extends Activity implements
 			b.putStringArrayList("json", (ArrayList<String>) kentekens);
 			intent.putExtras(b);
 			startActivity(intent);
-			
+
 		} else {
-			Message msg = new Message();
-			msg.obj = "Geen correct kenteken gescand!";
+			String msg = null;
+			msg = "Geen correct kenteken gescand!";
 			if (!isWiFiConnected(this)) {
-				msg.obj = "U bent niet verbonden met het internet!";
+				msg = "U bent niet verbonden met het internet!";
 			}
-			mHandler.sendMessage(msg);
+			Toast.makeText(OCRActivity.this, msg, Toast.LENGTH_LONG).show();
 			Intent intent = new Intent(this, OCRActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
 			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			startActivity(intent);
 		}
 	}
-	
-	public static boolean isWiFiConnected(Context context) {
-	    ConnectivityManager conMan = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-	    NetworkInfo.State wifi = conMan.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState();
-	    if (wifi == NetworkInfo.State.CONNECTED || wifi == NetworkInfo.State.CONNECTING)
-	        return true;
-	    return false;
-	}
 
-	@SuppressLint("HandlerLeak")
-	Handler mHandler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			String text = (String) msg.obj;
-			Log.v(TAG, "handleMessage >>>> " + text);
-			Toast.makeText(OCRActivity.this, text, Toast.LENGTH_LONG).show();
-		}
-	};
+	public static boolean isWiFiConnected(Context context) {
+		ConnectivityManager conMan = (ConnectivityManager) context
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo.State wifi = conMan.getNetworkInfo(
+				ConnectivityManager.TYPE_WIFI).getState();
+		if (wifi == NetworkInfo.State.CONNECTED
+				|| wifi == NetworkInfo.State.CONNECTING)
+			return true;
+		return false;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -457,20 +445,21 @@ public class OCRActivity extends Activity implements
 		try {
 			kentekens = getAllKentekensFromJSON(result);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		showResult(kentekens);
 	}
-	
-	public List<String> getAllKentekensFromJSON(JSONObject json) throws JSONException {
+
+	public List<String> getAllKentekensFromJSON(JSONObject json)
+			throws JSONException {
 		List<String> kentekens = new ArrayList<String>();
 		int jobstatus = Integer.parseInt(json.get("job_status").toString());
 		if (jobstatus == OCRServiceCaller.READY) {
 			JSONObject plates = json.getJSONObject("plates");
 			JSONArray plateArray = plates.getJSONArray("results");
 			for (int i = 0; i < plateArray.length(); i++) {
-				String kenteken = plateArray.getJSONObject(i).get("plate").toString();
+				String kenteken = plateArray.getJSONObject(i).get("plate")
+						.toString();
 				if (kenteken != null && kenteken.length() == KENTEKEN_SIZE) {
 					kentekens.add(kenteken);
 				}

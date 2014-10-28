@@ -95,9 +95,9 @@ public class KentekenServiceCaller extends AsyncTask<String, JSONObject, JSONObj
 					return object;
 				}
 			} catch (JSONException e) {
-				e.printStackTrace();
+				Log.e(TAG, "Unable to recieve data from json");
 			} catch (ParseException e) {
-				e.printStackTrace();
+				Log.e(TAG, "Unable to parse date");
 			}
 		}
 
