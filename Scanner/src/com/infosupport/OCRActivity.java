@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,10 +14,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.net.ConnectivityManager;
@@ -45,9 +43,10 @@ import android.widget.Toast;
 public class OCRActivity extends Activity implements
 		GestureDetector.OnGestureListener, Camera.OnZoomChangeListener,
 		Runnable, TaskDelegate {
-	public static String TAG = "OCRActivity";
-
-	public static float FULL_DISTANCE = 8000.0f;
+	
+	private static final int MEDIA_TYPE_IMAGE = 1;
+	private static final int KENTEKEN_SIZE = 6;
+	private static final String TAG = "OCRActivity";
 
 	private SurfaceView mPreview;
 	private SurfaceHolder mPreviewHolder;
@@ -55,15 +54,7 @@ public class OCRActivity extends Activity implements
 	private boolean mInPreview = false;
 	private boolean mCameraConfigured = false;
 	private TextView mZoomLevelView;
-
 	private GestureDetector mGestureDetector;
-
-	public static final int MEDIA_TYPE_IMAGE = 1;
-	public static final int MEDIA_TYPE_VIDEO = 2;
-
-	private static final String DATA_PATH = Environment
-			.getExternalStorageDirectory().toString() + "/SmartCamera/";
-	private static final String lang = "eng";
 	private String mPath;
 
 	/**
@@ -114,8 +105,6 @@ public class OCRActivity extends Activity implements
 	public void onCreate(Bundle savedInstanceState) {
 		Log.v(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
-
-		createTessdataFolder();
 
 		setContentView(R.layout.zoom);
 
@@ -406,6 +395,7 @@ public class OCRActivity extends Activity implements
 	    return false;
 	}
 
+	@SuppressLint("HandlerLeak")
 	Handler mHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -461,53 +451,6 @@ public class OCRActivity extends Activity implements
 		super.onPause();
 	}
 
-	/**
-	 * Creates a folder for the tessdata in case it doesn't exist. Then copies
-	 * the traineddata to the glass.
-	 */
-	public void createTessdataFolder() {
-		String[] paths = new String[] { DATA_PATH, DATA_PATH + "tessdata/" };
-
-		for (String path : paths) {
-			File dir = new File(path);
-			if (!dir.exists()) {
-				if (!dir.mkdirs()) {
-					Log.v(TAG, "ERROR: Creation of directory " + path
-							+ " on sdcard failed");
-					return;
-				} else {
-					Log.v(TAG, "Created directory " + path + " on sdcard");
-				}
-			}
-		}
-
-		if (!(new File(DATA_PATH + "tessdata/" + lang + ".traineddata"))
-				.exists()) {
-			try {
-				AssetManager assetManager = getAssets();
-				InputStream in = assetManager.open("tessdata/" + lang
-						+ ".traineddata");
-				OutputStream out = new FileOutputStream(DATA_PATH + "tessdata/"
-						+ lang + ".traineddata");
-
-				// Transfer bytes from in to out
-				byte[] buf = new byte[1024];
-				int len;
-				while ((len = in.read(buf)) > 0) {
-					out.write(buf, 0, len);
-				}
-				in.close();
-				out.close();
-
-				Log.v(TAG, "Copied " + lang + " traineddata");
-			} catch (IOException e) {
-				Log.e(TAG,
-						"Was unable to copy " + lang + " traineddata "
-								+ e.toString());
-			}
-		}
-	}
-
 	@Override
 	public void taskCompletionResult(JSONObject result) {
 		List<String> kentekens = new ArrayList<String>();
@@ -523,12 +466,12 @@ public class OCRActivity extends Activity implements
 	public List<String> getAllKentekensFromJSON(JSONObject json) throws JSONException {
 		List<String> kentekens = new ArrayList<String>();
 		int jobstatus = Integer.parseInt(json.get("job_status").toString());
-		if (jobstatus == 3) {
+		if (jobstatus == OCRServiceCaller.READY) {
 			JSONObject plates = json.getJSONObject("plates");
 			JSONArray plateArray = plates.getJSONArray("results");
 			for (int i = 0; i < plateArray.length(); i++) {
 				String kenteken = plateArray.getJSONObject(i).get("plate").toString();
-				if (kenteken != null && kenteken.length() == 6) {
+				if (kenteken != null && kenteken.length() == KENTEKEN_SIZE) {
 					kentekens.add(kenteken);
 				}
 			}

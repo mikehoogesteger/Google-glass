@@ -3,15 +3,11 @@ package com.infosupport;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.multipart.FilePart;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
@@ -21,11 +17,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 public class OCRServiceCaller extends AsyncTask<String, JSONObject, JSONObject> {
 	
-	private final String UPLOADURL = "http://demo.openalpr.com:8010/upload";
-	private final String GETURL = "http://demo.openalpr.com:8010/status?nonce=123456789";
+	private static final String TAG = "OCRServiceCaller";
+	private static final String UPLOADURL = "http://demo.openalpr.com:8010/upload";
+	private static final String GETURL = "http://demo.openalpr.com:8010/status?nonce=123456789";
+	public static final int READY = 3;
 	
 	private File image;
 	private TaskDelegate delegate;
@@ -40,9 +39,9 @@ public class OCRServiceCaller extends AsyncTask<String, JSONObject, JSONObject> 
 		postData(UPLOADURL, image);
 		int job_status = 1;
 		JSONObject json = null;
-		while (job_status < 3) {
+		while (job_status < READY) {
 			try {
-				Thread.sleep(200);
+				Thread.sleep(300);
 			} catch (InterruptedException e1) {
 				e1.printStackTrace();
 			}
@@ -58,13 +57,11 @@ public class OCRServiceCaller extends AsyncTask<String, JSONObject, JSONObject> 
 	
 	@Override
 	protected void onPostExecute(JSONObject result) {
-		System.out.println(result.toString() + "FROM POSTEXECUTE");
 		delegate.taskCompletionResult(result);
 		super.onPostExecute(result);
 	}
 	
 	public static void postData(String urlString, File file) {
-		int status = 0;
 	    try {
 	        PostMethod postMessage = new PostMethod(urlString);
 	        Part[] parts = {
@@ -74,14 +71,9 @@ public class OCRServiceCaller extends AsyncTask<String, JSONObject, JSONObject> 
 	        };
 	        postMessage.setRequestEntity(new MultipartRequestEntity(parts, postMessage.getParams()));
 	        HttpClient client = new HttpClient();
-
-	        status = client.executeMethod(postMessage);
-	    } catch (HttpException e) {
-	        // TODO Auto-generated catch block
-	        e.printStackTrace();
+	        client.executeMethod(postMessage);
 	    } catch (IOException e) {
-	        //  TODO Auto-generated catch block
-	        e.printStackTrace();
+	        Log.w(TAG, "IOException, waarschijnlijk geen internet connectie aanwezig...");
 	    }
 	}
 	
@@ -107,16 +99,14 @@ public class OCRServiceCaller extends AsyncTask<String, JSONObject, JSONObject> 
 				System.out.println(json + "from doGet");
 			}
 			conn.disconnect();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.w(TAG, "IOException, waarschijnlijk geen internet connectie aanwezig...");
 		}
 		JSONObject jsonObject = null;
 		try {
 			jsonObject = new JSONObject(json);
 		} catch (JSONException e) {
-			e.printStackTrace();
+			Log.e(TAG, "Kon geen JsonObject maken van het response");
 		}
 		return jsonObject;
 	}

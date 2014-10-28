@@ -53,7 +53,6 @@ public class KentekenServiceCaller extends AsyncTask<String, JSONObject, JSONObj
 	@Override
 	protected JSONObject doInBackground(String... params) {
 		List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
-		JSONObject jsonObject = null;
 		
 		for (String kenteken : kentekens) {
 			JSONObject obj = null;
