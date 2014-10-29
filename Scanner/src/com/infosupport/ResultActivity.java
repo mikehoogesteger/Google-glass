@@ -116,7 +116,7 @@ public class ResultActivity extends Activity implements TaskDelegate {
 		setContentView(R.layout.result);
 		if (result == null) {
 			mVerzekerd = (TextView) findViewById(R.id.verzekerd);
-			mVerzekerd.setText("Er is niets aan de hand");
+			mVerzekerd.setText("Het kenteken komt niet voor in de database");
 		} else {
 			try {
 				String kenteken = result.getJSONObject("resource").getString("Kenteken");
