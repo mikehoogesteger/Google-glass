@@ -91,9 +91,9 @@ public class KentekenServiceCaller extends AsyncTask<String, JSONObject, JSONObj
 						"VervaldatumAPK");
 				Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
 						.parse(apk);
-				if (verzekerd.equals("false") || date.after(new Date())) {
+				
 					return object;
-				}
+				
 			} catch (JSONException e) {
 				Log.e(TAG, "Unable to recieve data from json");
 			} catch (ParseException e) {
