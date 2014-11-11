@@ -1,5 +1,7 @@
 package com.infosupport;
 
+import java.util.List;
+
 import org.json.JSONObject;
 
 /**
@@ -16,4 +18,5 @@ public interface TaskDelegate {
 	 */
 	public void taskCompletionResult(JSONObject result);
 
+	public void taskCompletionResult(List<JSONObject> result);
 }

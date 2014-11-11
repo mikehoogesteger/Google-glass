@@ -309,8 +309,7 @@ public class OCRActivity extends Activity implements
 
 	Camera.PictureCallback mjpeg = new Camera.PictureCallback() {
 		public void onPictureTaken(byte[] data, Camera camera) {
-			// copied from
-			// http://developer.android.com/guide/topics/media/camera.html#custom-camera
+
 			File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
 			if (pictureFile == null) {
 				Log.v(TAG,
@@ -331,8 +330,17 @@ public class OCRActivity extends Activity implements
 			Log.v(TAG, pictureFile.getAbsolutePath());
 			mPath = pictureFile.getAbsolutePath();
 
-			Thread thread = new Thread(OCRActivity.this);
-			thread.start();
+			if (!isWiFiConnected(OCRActivity.this)) {
+				String msg = "U bent niet verbonden met het internet!";
+				Toast.makeText(OCRActivity.this, msg, Toast.LENGTH_LONG).show();
+				Intent intent = new Intent(OCRActivity.this, OCRActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				startActivity(intent);
+			} else {
+				Thread thread = new Thread(OCRActivity.this);
+				thread.start();
+			}
 		}
 	};
 
@@ -342,6 +350,7 @@ public class OCRActivity extends Activity implements
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
+		
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inSampleSize = 4;
 		File image = new File(mPath);
@@ -466,5 +475,10 @@ public class OCRActivity extends Activity implements
 			}
 		}
 		return kentekens;
+	}
+
+	@Override
+	public void taskCompletionResult(List<JSONObject> result) {
+
 	}
 }

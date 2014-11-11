@@ -59,7 +59,6 @@ public class OCRServiceCaller extends AsyncTask<String, JSONObject, JSONObject> 
 	@Override
 	protected void onPostExecute(JSONObject result) {
 		delegate.taskCompletionResult(result);
-		super.onPostExecute(result);
 	}
 	
 	public static void postData(String urlString, File file) {

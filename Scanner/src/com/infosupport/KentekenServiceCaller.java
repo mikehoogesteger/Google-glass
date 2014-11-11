@@ -22,7 +22,7 @@ import android.util.Log;
  * @author Mike The ServiceCaller does a call to the rdw api to get data about a
  *         drivers licence.
  */
-public class KentekenServiceCaller extends AsyncTask<String, JSONObject, JSONObject> {
+public class KentekenServiceCaller extends AsyncTask<String, JSONObject, List<JSONObject>> {
 
 	private static final String TAG = "KentekenServiceCaller";
 	private static final String BASE_URL = "http://rdw.almere.pilod.nl/kentekens/";
@@ -31,18 +31,19 @@ public class KentekenServiceCaller extends AsyncTask<String, JSONObject, JSONObj
 	private String json;
 	private ArrayList<String> kentekens;
 	private TaskDelegate delegate;
+	
 
 	/**
 	 * This constructor sets the kenteken and gives a delegation that will be
 	 * called when the asyncronical call is done.
 	 * 
-	 * @param kenteken
+	 * @param kentekens
 	 *            is the drivers licence
 	 * @param delegate
 	 *            is the class that will be called when the task is done
 	 */
-	public KentekenServiceCaller(ArrayList<String> kenteken, TaskDelegate delegate) {
-		kentekens = kenteken;
+	public KentekenServiceCaller(ArrayList<String> kentekens, TaskDelegate delegate) {
+		this.kentekens = kentekens;
 		this.delegate = delegate;
 	}
 
@@ -52,7 +53,7 @@ public class KentekenServiceCaller extends AsyncTask<String, JSONObject, JSONObj
 	 * @see android.os.AsyncTask#doInBackground(Params[])
 	 */
 	@Override
-	protected JSONObject doInBackground(String... params) {
+	protected List<JSONObject> doInBackground(String... params) {
 		List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
 		
 		for (String kenteken : kentekens) {
@@ -83,24 +84,11 @@ public class KentekenServiceCaller extends AsyncTask<String, JSONObject, JSONObj
 			}
 		}
 		
-		for (JSONObject object : jsonObjects) {
-			try {
-				String verzekerd = object.getJSONObject("resource").getString(
-						"WAMverzekerdgeregistreerd");
-				String apk = object.getJSONObject("resource").getString(
-						"VervaldatumAPK");
-				Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
-						.parse(apk);
-				
-					return object;
-				
-			} catch (JSONException e) {
-				Log.e(TAG, "Unable to recieve data from json");
-			} catch (ParseException e) {
-				Log.e(TAG, "Unable to parse date");
-			}
+		if (jsonObjects.size() != 0) {
+			System.out.println("Returning: " + jsonObjects.size());
+			return jsonObjects;
 		}
-
+		
 		return null;
 	}
 
@@ -110,8 +98,9 @@ public class KentekenServiceCaller extends AsyncTask<String, JSONObject, JSONObj
 	 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
 	 */
 	@Override
-	protected void onPostExecute(JSONObject result) {
-		delegate.taskCompletionResult(result);
-		super.onPostExecute(result);
+	protected void onPostExecute(List<JSONObject> result) {
+		if (result != null) {
+			delegate.taskCompletionResult(result);
+		}
 	}
 }

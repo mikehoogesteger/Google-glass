@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import org.json.JSONException;
@@ -31,7 +32,7 @@ public class ResultActivity extends Activity implements TaskDelegate {
 	private TextView mVerzekerd;
 	private TextView mAPK;
 	private TextView mError;
-	private ArrayList<String> kenteken;
+	private ArrayList<String> kentekens;
 	private KentekenServiceCaller sc;
 
 	/*
@@ -43,8 +44,8 @@ public class ResultActivity extends Activity implements TaskDelegate {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Bundle b = getIntent().getExtras();
-		kenteken = b.getStringArrayList("json");
-		sc = new KentekenServiceCaller(kenteken, this);
+		kentekens = b.getStringArrayList("json");
+		sc = new KentekenServiceCaller(kentekens, this);
 		sc.execute();
 	}
 
@@ -112,7 +113,6 @@ public class ResultActivity extends Activity implements TaskDelegate {
 	 */
 	@Override
 	public void taskCompletionResult(JSONObject result) {
-		// Log.i(TAG, result.toString());
 		setContentView(R.layout.result);
 		if (result == null) {
 			mVerzekerd = (TextView) findViewById(R.id.verzekerd);
@@ -155,6 +155,49 @@ public class ResultActivity extends Activity implements TaskDelegate {
 						"catch -> resource niet gevonden | datum kan niet geparst worden");
 				e.printStackTrace();
 			}
+		}
+	}
+
+	@Override
+	public void taskCompletionResult(List<JSONObject> result) {
+		Log.i(TAG, kentekens.toString());
+		setContentView(R.layout.result);
+		
+		if (result.size() != 0) {
+			
+			mKenteken = (TextView) findViewById(R.id.kenteken);
+			mVerzekerd = (TextView) findViewById(R.id.verzekerd);
+			mAPK = (TextView) findViewById(R.id.apk);
+			String kenteken = "";
+			String verzekerd = "";
+			String apk = "";
+			
+			for (JSONObject json : result) {
+				int i = 0;
+				try {
+					kenteken += json.getJSONObject("resource").getString("Kenteken") + " ";
+					verzekerd += json.getJSONObject("resource").getString(
+							"WAMverzekerdgeregistreerd") != null && json.getJSONObject("resource").getString(
+									"WAMverzekerdgeregistreerd").equals("true") ? "Verzekerd " : "Onverzekerd ";
+					String tempapk = json.getJSONObject("resource").getString(
+							"VervaldatumAPK");
+					Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss",
+							Locale.US).parse(tempapk);
+					apk += new SimpleDateFormat("dd/MM/yyyy",
+							Locale.US).format(date) + " ";
+					i++;
+				} catch (JSONException | ParseException e) {
+					kenteken = "";
+					verzekerd = "Er konden geen gegevens gevonden worden bij het kenteken: " + kentekens.get(i);
+					apk = "";
+				}
+			}
+			mKenteken.setText(kenteken);
+			mVerzekerd.setText(verzekerd);
+			mAPK.setText(apk);
+		} else {
+			mVerzekerd = (TextView) findViewById(R.id.verzekerd);
+			mVerzekerd.setText("Er zijn geen kentekens gevonden");
 		}
 	}
 }
