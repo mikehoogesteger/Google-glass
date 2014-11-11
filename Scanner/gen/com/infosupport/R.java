@@ -12,6 +12,7 @@ public final class R {
     }
     public static final class color {
         public static final int black=0x7f080000;
+        public static final int green=0x7f080003;
         public static final int red=0x7f080002;
         public static final int white=0x7f080001;
     }
@@ -27,21 +28,29 @@ public final class R {
         public static final int activity_vertical_margin=0x7f050001;
     }
     public static final class drawable {
-        public static final int border=0x7f020000;
+        public static final int green_border=0x7f020000;
         public static final int ic_launcher=0x7f020001;
         public static final int ic_scan=0x7f020002;
         public static final int ic_stop=0x7f020003;
-        public static final int license=0x7f020004;
+        public static final int red_border=0x7f020004;
     }
     public static final class id {
-        public static final int apk=0x7f0a0003;
-        public static final int error=0x7f0a0004;
-        public static final int kenteken=0x7f0a0001;
+        public static final int apk_center=0x7f0a0008;
+        public static final int apk_left=0x7f0a0004;
+        public static final int apk_right=0x7f0a000c;
+        public static final int center_content=0x7f0a0005;
+        public static final int kenteken_center=0x7f0a0006;
+        public static final int kenteken_left=0x7f0a0002;
+        public static final int kenteken_right=0x7f0a000a;
+        public static final int left_content=0x7f0a0001;
         public static final int preview=0x7f0a0000;
-        public static final int scan=0x7f0a0006;
-        public static final int stop=0x7f0a0007;
-        public static final int verzekerd=0x7f0a0002;
-        public static final int zoomLevel=0x7f0a0005;
+        public static final int right_content=0x7f0a0009;
+        public static final int scan=0x7f0a000e;
+        public static final int stop=0x7f0a000f;
+        public static final int verzekerd_center=0x7f0a0007;
+        public static final int verzekerd_left=0x7f0a0003;
+        public static final int verzekerd_right=0x7f0a000b;
+        public static final int zoomLevel=0x7f0a000d;
     }
     public static final class layout {
         public static final int preview=0x7f030000;

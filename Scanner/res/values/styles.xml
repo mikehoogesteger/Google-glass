@@ -20,5 +20,6 @@
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="red">#cc3333</color>
+    <color name="green">#99cc33</color>
 
 </resources>

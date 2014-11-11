@@ -115,7 +115,7 @@ public class ResultActivity extends Activity implements TaskDelegate {
 	public void taskCompletionResult(JSONObject result) {
 		setContentView(R.layout.result);
 		if (result == null) {
-			mVerzekerd = (TextView) findViewById(R.id.verzekerd);
+			mVerzekerd = (TextView) findViewById(R.id.verzekerd_center);
 			mVerzekerd.setText("Het kenteken komt niet voor in de database");
 		} else {
 			try {
@@ -129,9 +129,9 @@ public class ResultActivity extends Activity implements TaskDelegate {
 				String formattedApk = new SimpleDateFormat("dd/MM/yyyy",
 						Locale.US).format(date);
 
-				mKenteken = (TextView) findViewById(R.id.kenteken);
-				mVerzekerd = (TextView) findViewById(R.id.verzekerd);
-				mAPK = (TextView) findViewById(R.id.apk);
+				mKenteken = (TextView) findViewById(R.id.kenteken_center);
+				mVerzekerd = (TextView) findViewById(R.id.verzekerd_center);
+				mAPK = (TextView) findViewById(R.id.apk_center);
 
 				mKenteken.setText("Kenteken: " + kenteken);
 				if (verzekerd == "true") {
@@ -145,8 +145,8 @@ public class ResultActivity extends Activity implements TaskDelegate {
 					String error = result.getJSONObject("error").getString(
 							"message");
 
-					mError = (TextView) findViewById(R.id.error);
-					mError.setText(error);
+//					mError = (TextView) findViewById(R.id.error);
+//					mError.setText(error);
 				} catch (JSONException e1) {
 					Log.e(TAG, "catch -> error niet gevonden");
 					e1.printStackTrace();
@@ -165,39 +165,66 @@ public class ResultActivity extends Activity implements TaskDelegate {
 		
 		if (result.size() != 0) {
 			
-			mKenteken = (TextView) findViewById(R.id.kenteken);
-			mVerzekerd = (TextView) findViewById(R.id.verzekerd);
-			mAPK = (TextView) findViewById(R.id.apk);
+			mKenteken = (TextView) findViewById(R.id.kenteken_center);
+			mVerzekerd = (TextView) findViewById(R.id.verzekerd_center);
+			mAPK = (TextView) findViewById(R.id.apk_center);
+			
 			String kenteken = "";
 			String verzekerd = "";
 			String apk = "";
 			
-			for (JSONObject json : result) {
-				int i = 0;
+			//for (JSONObject json : result) {
+				/*JSONObject json = result.get(0);
 				try {
-					kenteken += json.getJSONObject("resource").getString("Kenteken") + " ";
-					verzekerd += json.getJSONObject("resource").getString(
+					kenteken = json.getJSONObject("resource").getString("Kenteken") + " ";
+					verzekerd = json.getJSONObject("resource").getString(
 							"WAMverzekerdgeregistreerd") != null && json.getJSONObject("resource").getString(
 									"WAMverzekerdgeregistreerd").equals("true") ? "Verzekerd " : "Onverzekerd ";
 					String tempapk = json.getJSONObject("resource").getString(
 							"VervaldatumAPK");
 					Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss",
 							Locale.US).parse(tempapk);
-					apk += new SimpleDateFormat("dd/MM/yyyy",
+					apk = new SimpleDateFormat("dd/MM/yyyy",
 							Locale.US).format(date) + " ";
-					i++;
+					
 				} catch (JSONException | ParseException e) {
 					kenteken = "";
-					verzekerd = "Er konden geen gegevens gevonden worden bij het kenteken: " + kentekens.get(i);
+					verzekerd = "Er konden geen gegevens gevonden worden bij het kenteken: " + kentekens.get(0);
 					apk = "";
-				}
-			}
-			mKenteken.setText(kenteken);
+				}*/
+			//}
+			/*mKenteken.setText(kenteken);
 			mVerzekerd.setText(verzekerd);
-			mAPK.setText(apk);
+			mAPK.setText(apk);*/
+			System.out.println("Tekst wordt gewijzigd");
+			mKenteken.setText("99WK07");
+			mVerzekerd.setText("Onverzekerd");
+			mAPK.setText("05/12/2014");
 		} else {
-			mVerzekerd = (TextView) findViewById(R.id.verzekerd);
+			mVerzekerd = (TextView) findViewById(R.id.verzekerd_center);
 			mVerzekerd.setText("Er zijn geen kentekens gevonden");
 		}
+		setLeftText();
+		setRightText();
+	}
+	
+	public void setLeftText() {
+		mKenteken = (TextView) findViewById(R.id.kenteken_left);
+		mVerzekerd = (TextView) findViewById(R.id.verzekerd_left);
+		mAPK = (TextView) findViewById(R.id.apk_left);
+		
+		mKenteken.setText("94TNDL");
+		mVerzekerd.setText("Verzekerd");
+		mAPK.setText("23/07/2015");
+	}
+	
+	public void setRightText() {
+		mKenteken = (TextView) findViewById(R.id.kenteken_right);
+		mVerzekerd = (TextView) findViewById(R.id.verzekerd_right);
+		mAPK = (TextView) findViewById(R.id.apk_right);
+		
+		mKenteken.setText("01SK99");
+		mVerzekerd.setText("Onverzekerd");
+		mAPK.setText("21/11/2020");
 	}
 }
