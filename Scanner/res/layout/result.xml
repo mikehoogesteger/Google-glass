@@ -2,25 +2,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
+    android:baselineAligned="false"
     android:gravity="center"
+    android:orientation="horizontal"
     tools:context=".ResultActivity" >
 
     <LinearLayout
         android:id="@+id/left_content"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        android:layout_weight=".33"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context=".ResultActivity"
-        android:background="@drawable/green_border">
+        android:paddingEnd="5dp"
+        android:paddingStart="5dp"
+        tools:context=".ResultActivity" >
 
         <TextView
             android:id="@+id/kenteken_left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginBottom="50dp"
             android:layout_marginTop="15dp"
-           	android:layout_marginBottom="50dp"
             android:textSize="20sp" />
 
         <TextView
@@ -41,21 +44,21 @@
 
     <LinearLayout
         android:id="@+id/center_content"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        android:layout_weight=".33"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context=".ResultActivity" 
-        android:background="@drawable/red_border">
-
-        <!-- Center piece -->
+        android:paddingEnd="5dp"
+        android:paddingStart="5dp"
+        tools:context=".ResultActivity" >
 
         <TextView
             android:id="@+id/kenteken_center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginBottom="50dp"
             android:layout_marginTop="15dp"
-           	android:layout_marginBottom="50dp"
             android:textSize="20sp" />
 
         <TextView
@@ -73,23 +76,24 @@
             android:layout_gravity="center"
             android:textSize="20sp" />
     </LinearLayout>
-    <!-- Right piece -->
 
     <LinearLayout
         android:id="@+id/right_content"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+		android:layout_weight=".33"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context=".ResultActivity" 
-        android:background="@drawable/red_border">
+        android:paddingEnd="5dp"
+        android:paddingStart="5dp"
+        tools:context=".ResultActivity" >
 
         <TextView
             android:id="@+id/kenteken_right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginBottom="50dp"
             android:layout_marginTop="15dp"
-           	android:layout_marginBottom="50dp"
             android:textSize="20sp" />
 
         <TextView
@@ -107,8 +111,5 @@
             android:layout_gravity="center"
             android:textSize="20sp" />
     </LinearLayout>
-    <!-- Error piece -->
-
-    
 
 </LinearLayout>
