@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.infosupport"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="2.1" >
 
     <uses-sdk
         android:minSdkVersion="19"
@@ -29,17 +29,17 @@
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".OCRActivity"
+            android:name="com.infosupport.activity.OCRActivity"
             android:enabled="true"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".ResultActivity"
+            android:name="com.infosupport.activity.ResultActivity"
             android:enabled="true"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name="com.infosupport.activity.MainActivity"
             android:enabled="true"
             android:exported="true"
             android:icon="@drawable/ic_scan"
