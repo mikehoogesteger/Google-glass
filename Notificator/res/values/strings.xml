@@ -1,0 +1,10 @@
+<resources>
+
+    <string name="app_name">Notificator</string>
+    <string name="stop">Stop</string>
+    <string name="start">Restart</string>
+    <string name="show">Show whole picture</string>
+    <string name="description">Description</string>
+    <string name="input_description">Voeg een beschrijving toe</string>
+
+</resources>
