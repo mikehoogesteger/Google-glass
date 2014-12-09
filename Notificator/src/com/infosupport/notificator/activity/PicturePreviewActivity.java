@@ -72,4 +72,5 @@ public class PicturePreviewActivity extends Activity {
 		Log.v(TAG, "setBitmap");
 		PicturePreviewActivity.bitmap = bitmap;
 	}
+
 }

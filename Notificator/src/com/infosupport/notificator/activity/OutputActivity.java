@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -18,10 +19,13 @@ import com.google.android.glass.widget.CardBuilder;
 import com.infosupport.notificator.R;
 
 public class OutputActivity extends Activity {
-	
+
 	private static final String TAG = "OutputActivity";
 	private static File image;
-	
+	private static String description = null;
+
+	private View view = null;
+	private Bitmap bitmap = null;
 
 	/*
 	 * (non-Javadoc)
@@ -32,17 +36,26 @@ public class OutputActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.v(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
-		
+		description = null;
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-		Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(), options);
+		bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(), options);
 		PicturePreviewActivity.setBitmap(bitmap);
-		
-		View view = new CardBuilder(this, CardBuilder.Layout.COLUMNS)
-				.setText(R.string.input_description)
-				.addImage(bitmap)
-				.getView();
+
+		view = new CardBuilder(this, CardBuilder.Layout.COLUMNS)
+				.setText(R.string.input_description).addImage(bitmap).getView();
 		setContentView(view);
+	}
+
+	@Override
+	protected void onResume() {
+		if (description != null) {
+			view = new CardBuilder(this, CardBuilder.Layout.COLUMNS)
+					.setText(description).addImage(bitmap)
+					.getView();
+			setContentView(view);
+		}
+		super.onResume();
 	}
 
 	@Override
@@ -52,9 +65,9 @@ public class OutputActivity extends Activity {
 			openOptionsMenu();
 			return true;
 		} else if (keyCode == KeyEvent.KEYCODE_BACK) {
-			Intent stopIntent = new Intent(OutputActivity.this, MainActivity.class);
-			stopIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-			stopIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			Intent stopIntent = new Intent(this, MainActivity.class);
+			stopIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+					| Intent.FLAG_ACTIVITY_NEW_TASK);
 			startActivity(stopIntent);
 			return true;
 		}
@@ -74,17 +87,24 @@ public class OutputActivity extends Activity {
 		Log.v(TAG, "onOptionsItemSelected");
 		switch (item.getItemId()) {
 		case R.id.start:
-			Intent startIntent = new Intent(OutputActivity.this, MainActivity.class);
+			Intent startIntent = new Intent(this, MainActivity.class);
+			startIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+					| Intent.FLAG_ACTIVITY_NEW_TASK);
 			startActivity(startIntent);
 			return true;
 		case R.id.show:
-			Intent showIntent = new Intent(OutputActivity.this, PicturePreviewActivity.class);
+			Intent showIntent = new Intent(OutputActivity.this,
+					PicturePreviewActivity.class);
 			startActivity(showIntent);
 			return true;
+		case R.id.description:
+			Intent descriptionIntent = new Intent(this, VoiceActivity.class);
+			startActivity(descriptionIntent);
+			return true;
 		case R.id.stop:
-			Intent stopIntent = new Intent(OutputActivity.this, MainActivity.class);
-			stopIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-			stopIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			Intent stopIntent = new Intent(this, MainActivity.class);
+			stopIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+					| Intent.FLAG_ACTIVITY_NEW_TASK);
 			startActivity(stopIntent);
 			return true;
 
@@ -92,15 +112,14 @@ public class OutputActivity extends Activity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-	
+
 	public static void setImage(File image) {
 		Log.v(TAG, "setImage");
 		OutputActivity.image = image;
 	}
 	
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.v(TAG, "onActivityResult");
+	public static void setDescription(String description) {
+		OutputActivity.description = description;
 	}
-	
+
 }

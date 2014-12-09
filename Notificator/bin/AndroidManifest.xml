@@ -46,6 +46,11 @@
             android:enabled="true"
             android:label="@string/app_name" >
         </activity>
+         <activity
+            android:name="com.infosupport.notificator.activity.VoiceActivity"
+            android:enabled="true"
+            android:label="@string/app_name" >
+        </activity>
     </application>
 
 </manifest>

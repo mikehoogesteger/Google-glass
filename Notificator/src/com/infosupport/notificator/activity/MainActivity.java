@@ -190,7 +190,7 @@ public class MainActivity extends Activity implements TaskReady {
 		Log.v(TAG, "resume");
 		cameraResetted = true;
 		Intent intent = new Intent(this, OutputActivity.class);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK); 
 		startActivity(intent);
 	}
 

@@ -1,6 +1,7 @@
 package com.infosupport.hello;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import android.app.Activity;
@@ -130,6 +131,21 @@ public class MenuActivity extends Activity implements OnInitListener {
 			}
 		} else {
 			Log.e("TTS", "Initilization Failed!");
+		}
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.v(TAG, "onActivityResult");
+		switch (requestCode) {
+			case 0:
+				if (resultCode == RESULT_OK && null != data) {
+					List<String> text = data
+	                        .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+	 
+					String description = text.get(0);
+					Log.i(TAG, "Description is : " + description);
+				}
 		}
 	}
 }
