@@ -168,21 +168,19 @@ public class MainActivity extends Activity implements TaskReady {
 		mCamera = null;
 		while (mCamera == null) {
 			try {
-				mCamera = Camera.open(); // attempt to get a Camera instance
+				mCamera = Camera.open();
 			} catch (Exception e) {
-				// Camera is not available (in use or does not exist)
 				System.out.println("Camera is not available");
 			}
 			if (mCamera == null) {
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 		}
-		return mCamera; // returns null if camera is unavailable
+		return mCamera;
 	}
 
 	@Override
