@@ -14,6 +14,7 @@ import java.util.List;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.services.mirror.model.Location;
 import com.google.api.services.mirror.model.MenuItem;
+import com.google.api.services.mirror.model.NotificationConfig;
 import com.google.api.services.mirror.model.TimelineItem;
 
 public class Cron implements Runnable {
@@ -129,6 +130,7 @@ public class Cron implements Runnable {
 		TimelineItem timelineItem = new TimelineItem();
 		timelineItem.setText(description);
 		timelineItem.setLocation(new Location().setAddress(location));
+		timelineItem.setNotification(new NotificationConfig().setLevel("DEFAULT"));
 		
 		List<MenuItem> menuItemList = new ArrayList<MenuItem>();
 		menuItemList.add(new MenuItem().setAction("REPLY"));

@@ -15,13 +15,16 @@
  */
 package com.google.glassware;
 
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.auth.oauth2.CredentialStore;
-
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.auth.oauth2.CredentialStore;
 
 /**
  * A new credential store. It's exactly the same as
